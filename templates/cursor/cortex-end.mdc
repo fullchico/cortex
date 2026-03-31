@@ -43,9 +43,22 @@ alwaysApply: false
 | Modulo criado | `./.cortex/Arquitetura/Mapa de Modulos.md` |
 | Endpoint criado | `./.cortex/Arquitetura/Contratos API.md` |
 
-7. Atualizar indice `./.cortex/Sessoes/Sessoes - Memoria Temporal.md` se nota nova
+7. Sugestoes de melhoria (verificar oportunidades encontradas durante a sessao):
 
-8. Confirmar:
+| Oportunidade | Verificar |
+|---|---|
+| Testes faltando | Codigo sem cobertura ou sem teste associado |
+| Clean Code | Funcoes longas, nomes confusos, comentarios desnecessarios |
+| Clean Architecture | Dependencias cruzando camadas erradas |
+| SOLID | Classe com mais de uma responsabilidade, aberta para modificacao, etc. |
+
+Regra: **nao interromper o fluxo** — se encontrou, adicionar como `- [ ]` nos Proximos Passos da nota de timeline. Nao sugerir o que ja esta feito.
+
+Se vault tem `./.cortex/Projeto.md` com secao `## Boas Praticas`: priorizar as praticas listadas.
+
+8. Atualizar indice `./.cortex/Sessoes/Sessoes - Memoria Temporal.md` se nota nova
+
+9. Confirmar:
 ```
 Sessao salva:
 - Timeline: ./.cortex/Sessoes/timeline/YYYY-MM-DD.md

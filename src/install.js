@@ -13,6 +13,7 @@ const EN_PATHS = [
   [/Sessoes\//g, 'Sessions/'],
   [/Dominio\/Glossario de Dominio\.md/g, 'Domain/Domain Glossary.md'],
   [/Dominio\/Entidades\.md/g, 'Domain/Entities.md'],
+  [/Dominio\/Eventos de Dominio\.md/g, 'Domain/Domain Events.md'],
   [/Dominio\//g, 'Domain/'],
   [/Arquitetura\/Padroes de Codigo\.md/g, 'Architecture/Code Patterns.md'],
   [/Arquitetura\/Mapa de Modulos\.md/g, 'Architecture/Module Map.md'],

@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -42,8 +42,107 @@ const DIRS = {
 
 // --- Builders ---
 
+function buildPracticesSection(vars, lang) {
+  const practices = vars.PRACTICES || []
+  if (practices.length === 0) return ''
+
+  const isEN  = lang === 'en'
+  const type  = vars.PROJECT_TYPE || 'fullstack'
+  const isFront = type === 'frontend'
+  const isBack  = type === 'backend'
+
+  const examples = {
+    tests: {
+      title: isEN ? 'Unit tests' : 'Testes unitarios',
+      items: isFront
+        ? (isEN
+            ? ['Jest + Testing Library (React) / Vitest + Vue Test Utils / Angular Testing',
+               'Test behavior, not implementation details',
+               'One test file per component · describe/it blocks',
+               'Mock only external dependencies (API calls, localStorage)']
+            : ['Jest + Testing Library (React) / Vitest + Vue Test Utils / Angular Testing',
+               'Testar comportamento, nao detalhes de implementacao',
+               'Um arquivo de teste por componente · blocos describe/it',
+               'Mockar apenas dependencias externas (chamadas API, localStorage)'])
+        : isBack
+        ? (isEN
+            ? ['Jest/Vitest (Node.js) · JUnit (Java) · testify (Go)',
+               'Unit tests: pure functions and service logic in isolation',
+               'Integration tests: real database, real HTTP calls',
+               'Test file mirrors source structure (users.service.test.ts)']
+            : ['Jest/Vitest (Node.js) · JUnit (Java) · testify (Go)',
+               'Unit tests: funcoes puras e logica de service em isolamento',
+               'Integration tests: banco real, chamadas HTTP reais',
+               'Arquivo de teste espelha a estrutura do source'])
+        : (isEN
+            ? ['Front: Testing Library · behavior tests per component',
+               'Back: Jest/Vitest · unit + integration tests',
+               'E2E: Playwright or Cypress for critical user flows']
+            : ['Front: Testing Library · testes de comportamento por componente',
+               'Back: Jest/Vitest · unit + integration tests',
+               'E2E: Playwright ou Cypress para fluxos criticos']),
+    },
+    clean: {
+      title: 'Clean Architecture + Clean Code',
+      items: isFront
+        ? (isEN
+            ? ['Presentational vs container components (UI vs logic)',
+               'Hooks extract reusable logic from components',
+               'Services layer for all API calls — no fetch inside components',
+               'Clean Code: functions < 20 lines · names that reveal intent · no dead comments']
+            : ['Presentational vs container components (UI vs logica)',
+               'Hooks extraem logica reutilizavel dos componentes',
+               'Camada de services para todas as chamadas API — sem fetch dentro de componente',
+               'Clean Code: funcoes < 20 linhas · nomes que revelam intencao · sem comentarios mortos'])
+        : isBack
+        ? (isEN
+            ? ['Layers: Controller → Service → Repository (no layer skipping)',
+               'No business logic in controllers — only orchestration',
+               'Repositories abstract all database access',
+               'Clean Code: single responsibility · early return · no magic numbers']
+            : ['Camadas: Controller → Service → Repository (sem pular camada)',
+               'Sem logica de negocio no controller — apenas orquestracao',
+               'Repositories abstraem todo acesso ao banco',
+               'Clean Code: responsabilidade unica · early return · sem numeros magicos'])
+        : (isEN
+            ? ['Front: component layers — UI / hooks / services',
+               'Back: Controller → Service → Repository',
+               'Shared: no business logic leaking between layers',
+               'Clean Code: names that reveal intent · small focused functions']
+            : ['Front: camadas — UI / hooks / services',
+               'Back: Controller → Service → Repository',
+               'Compartilhado: sem logica de negocio vazando entre camadas',
+               'Clean Code: nomes que revelam intencao · funcoes pequenas e focadas']),
+    },
+    solid: {
+      title: isEN ? 'SOLID Principles' : 'Principios SOLID',
+      items: isEN
+        ? ['S — Single Responsibility: one class/component = one reason to change',
+           'O — Open/Closed: extend behavior without modifying existing code (strategy, plugins)',
+           'L — Liskov Substitution: subtypes must be interchangeable with their base type',
+           'I — Interface Segregation: specific interfaces, not one fat interface',
+           'D — Dependency Inversion: depend on abstractions, inject concrete implementations']
+        : ['S — Single Responsibility: uma classe/componente = uma razao para mudar',
+           'O — Open/Closed: estender comportamento sem modificar codigo existente (strategy, plugins)',
+           'L — Liskov Substitution: subtipos devem ser intercambiaveis com o tipo base',
+           'I — Interface Segregation: interfaces especificas, nao uma interface gorda',
+           'D — Dependency Inversion: depender de abstracoes, injetar implementacoes concretas'],
+    },
+  }
+
+  const blocks = practices.map(p => {
+    const ex = examples[p]
+    if (!ex) return ''
+    return `### ${ex.title}\n${ex.items.map(i => `- ${i}`).join('\n')}`
+  }).filter(Boolean)
+
+  return `\n---\n\n## ${isEN ? 'Best Practices' : 'Boas Praticas'}\n\n${blocks.join('\n\n')}\n`
+}
+
 function buildLivreRoot(vars, lang) {
   const isEN = lang === 'en'
+  const practicesSection = buildPracticesSection(vars, lang)
+
   return `# ${vars.NAME}
 
 ${isEN ? '#project' : '#projeto'}
@@ -68,7 +167,7 @@ cortex start [contexto]   ${isEN ? '→ opens session, loads context' : '→ abr
 cortex end                ${isEN ? '→ saves session to timeline' : '→ salva sessao na timeline'}
 cortex context <nome>     ${isEN ? '→ creates a new context island' : '→ cria uma ilha de contexto'}
 \`\`\`
-`
+${practicesSection}`
 }
 
 function buildProjectMemory(vars, lang) {
@@ -168,6 +267,210 @@ ${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 
 | ${isEN ? 'Date' : 'Data'} | ${isEN ? 'Session' : 'Sessao'} | ${isEN ? 'Focus' : 'Foco'} |
 |------|--------|------|
+`
+}
+
+function buildEntidades(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  const title = isEN ? 'Entities' : 'Entidades'
+  const tags = isEN ? '#domain #schema #ddd' : '#dominio #schema #ddd'
+  const callout = isEN ? 'Real fields — check before coding' : 'Campos reais — consultar antes de codar'
+
+  return `# ${title}
+
+${tags}
+
+> [!abstract] ${callout}
+
+> [!tip] **Entity** tem identidade (ID) · **Value Object** imutavel, igualdade por valor · **Aggregate** raiz de consistencia transacional
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+## ${isEN ? 'Entities' : 'Entidades'}
+
+| ${isEN ? 'Name' : 'Nome'} | ${isEN ? 'Fields' : 'Campos'} | ${isEN ? 'Invariants' : 'Invariantes'} |
+|------|--------|-------------|
+| _ex: User_ | id, email, name | ${isEN ? 'unique email' : 'email unico'} |
+
+## Value Objects
+
+| ${isEN ? 'Name' : 'Nome'} | ${isEN ? 'Fields' : 'Campos'} | ${isEN ? 'Validation rule' : 'Regra de validacao'} |
+|------|--------|--------------------|
+| _ex: Email_ | value | ${isEN ? 'valid format, immutable' : 'formato valido, imutavel'} |
+
+## Aggregates
+
+| ${isEN ? 'Root' : 'Raiz'} | ${isEN ? 'Included entities' : 'Entidades incluidas'} | ${isEN ? 'Main invariant' : 'Invariante principal'} |
+|------|---------------------|---------------------|
+| _ex: Order_ | OrderItem, ShippingAddress | ${isEN ? 'total > 0' : 'total > 0'} |
+`
+}
+
+function buildDomainEvents(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  const title = isEN ? 'Domain Events' : 'Eventos de Dominio'
+  const tags = isEN ? '#domain #ddd #events' : '#dominio #ddd #eventos'
+  const callout = isEN
+    ? 'Facts that happened in the domain — past-tense naming'
+    : 'Fatos que aconteceram no dominio — nomenclatura no passado'
+
+  return `# ${title}
+
+${tags}
+
+> [!abstract] ${callout}
+
+> [!tip] ${isEN
+    ? 'Domain Events represent something the business cares about. Ex: UserRegistered, OrderPlaced, PaymentFailed.'
+    : 'Domain Events representam algo que o negocio se importa. Ex: UserRegistered, OrderPlaced, PaymentFailed.'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+| ${isEN ? 'Event' : 'Evento'} | ${isEN ? 'Emitted by' : 'Emitido por'} | ${isEN ? 'Data' : 'Dados'} | ${isEN ? 'Subscribers' : 'Assinantes'} |
+|--------|-------------|-------|------------|
+| _ex: UserRegistered_ | User aggregate | userId, email, createdAt | EmailService, AuditLog |
+`
+}
+
+function buildBoundedContexts(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  const title = isEN ? 'Bounded Contexts' : 'Bounded Contexts'
+  const tags = isEN ? '#architecture #ddd' : '#arquitetura #ddd'
+  const callout = isEN
+    ? 'Context boundaries — each context has its own model and language'
+    : 'Fronteiras de contexto — cada contexto tem seu modelo e linguagem proprios'
+
+  return `# ${title}
+
+${tags}
+
+> [!abstract] ${callout}
+
+> [!tip] ${isEN
+    ? 'Rule: do NOT import entities from another context directly — communicate via events or DTOs.'
+    : 'Regra: NAO importar entidades de outro contexto diretamente — comunicar via eventos ou DTOs.'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+| ${isEN ? 'Context' : 'Contexto'} | ${isEN ? 'Responsibility' : 'Responsabilidade'} | ${isEN ? 'Main model' : 'Modelo principal'} | ${isEN ? 'Communication' : 'Comunicacao'} |
+|----------|-----------------|-----------------|-------------|
+| _ex: Auth_ | ${isEN ? 'authentication and sessions' : 'autenticacao e sessoes'} | User, Session | ${isEN ? 'emits UserLoggedIn' : 'emite UserLoggedIn'} |
+
+## ${isEN ? 'Dependency map' : 'Mapa de dependencias'}
+
+_(${isEN ? 'how the contexts communicate' : 'como os contextos se comunicam'})_
+
+## ${isEN ? 'Frontend: Feature Modules as Bounded Contexts' : 'Frontend: Feature Modules como Bounded Contexts'}
+
+${isEN
+  ? `Each feature (\`/auth\`, \`/dashboard\`, \`/payments\`) is a bounded context:
+- Has its own types/interfaces
+- Does not import directly from another feature — uses shared/ or events
+- Same vocabulary as the backend (do NOT rename \`user\` to \`loggedPerson\`)`
+  : `Cada feature (\`/auth\`, \`/dashboard\`, \`/payments\`) e um bounded context:
+- Tem seus proprios types/interfaces
+- Nao importa diretamente de outro feature — usa shared/ ou eventos
+- Mesmo vocabulario que o back (NAO renomear \`user\` para \`loggedPerson\`)`}
+`
+}
+
+function buildCleanArch(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  const domainEventsLink = isEN ? 'Domain Events' : 'Eventos de Dominio'
+
+  return `# Clean Architecture
+
+${isEN ? '#architecture #clean-arch #ddd #solid' : '#arquitetura #clean-arch #ddd #solid'}
+
+> [!abstract] ${isEN ? 'Layers + DDD building blocks + SOLID' : 'Camadas + DDD building blocks + SOLID'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+## ${isEN ? 'Layers' : 'Camadas'}
+
+| ${isEN ? 'Layer' : 'Camada'} | ${isEN ? 'Responsibility' : 'Responsabilidade'} | ${isEN ? 'Can depend on' : 'Pode depender de'} |
+|--------|-----------------|-----------------|
+| **Domain** | ${isEN ? 'Entities, VOs, Aggregates, Domain Services, Domain Events' : 'Entities, VOs, Aggregates, Domain Services, Domain Events'} | ${isEN ? 'Nothing' : 'Nada'} |
+| **Application** | ${isEN ? 'Use Cases, Application Services, Commands/Queries' : 'Use Cases, Application Services, Commands/Queries'} | Domain |
+| **Infrastructure** | ${isEN ? 'Repositories, Adapters, External APIs, DB' : 'Repositories, Adapters, APIs externas, DB'} | Application, Domain |
+| **Presentation** | ${isEN ? 'Controllers, UI Components, Hooks' : 'Controllers, UI Components, Hooks'} | Application |
+
+> ${isEN ? 'Dependencies point INWARD. Domain does not know Infrastructure.' : 'Dependencias apontam para DENTRO. Domain nao conhece Infrastructure.'}
+
+---
+
+## DDD Building Blocks
+
+### Entity
+- ${isEN ? 'Has identity (unique ID)' : 'Tem identidade (ID unico)'}
+- ${isEN ? 'Mutable over time' : 'Mutavel ao longo do tempo'}
+- ${isEN ? 'Equality by ID' : 'Igualdade por ID'}
+- ${isEN ? 'Ex: User, Order, Product' : 'Ex: User, Order, Product'}
+
+### Value Object
+- ${isEN ? 'No own identity' : 'Sem identidade propria'}
+- ${isEN ? 'Immutable — create new instead of modifying' : 'Imutavel — criar novo ao inves de modificar'}
+- ${isEN ? 'Equality by value of all fields' : 'Igualdade por valor de todos os campos'}
+- ${isEN ? 'Ex: Money, Email, Address' : 'Ex: Money, Email, Address, CPF'}
+
+### Aggregate
+- ${isEN ? 'Consistency root (Aggregate Root)' : 'Raiz de consistencia (Aggregate Root)'}
+- ${isEN ? 'External operations ALWAYS go through the root' : 'Operacoes externas passam SEMPRE pela raiz'}
+- ${isEN ? 'Defines transactional boundary' : 'Define fronteira transacional'}
+- ${isEN ? 'Ex: Order (root) + OrderItems + ShippingAddress' : 'Ex: Order (raiz) + OrderItems + ShippingAddress'}
+
+### Domain Service
+- ${isEN ? 'Domain logic that does not belong to a specific entity' : 'Logica de dominio que nao pertence a uma entidade especifica'}
+- ${isEN ? 'No own state' : 'Sem estado proprio'}
+- ${isEN ? 'Ex: PricingService, TaxCalculator' : 'Ex: PricingService, TaxCalculator'}
+
+### Domain Event
+- ${isEN ? 'Something important happened in the domain' : 'Algo importante aconteceu no dominio'}
+- ${isEN ? 'Past-tense naming: UserRegistered, OrderPlaced' : 'Nomenclatura no passado: UserRegistered, OrderPlaced'}
+- ${isEN ? 'See' : 'Ver'}: [[${domainEventsLink}]]
+
+### Repository
+- ${isEN ? 'Interface defined in Domain' : 'Interface definida no Domain'}
+- ${isEN ? 'Implementation in Infrastructure' : 'Implementacao na Infrastructure'}
+- ${isEN ? 'Completely abstracts persistence' : 'Abstrai persistencia completamente'}
+
+---
+
+## SOLID
+
+| ${isEN ? 'Principle' : 'Principio'} | ${isEN ? 'Rule' : 'Regra'} | ${isEN ? 'Common violation' : 'Violacao comum'} |
+|-----------|-------|---------------|
+| **S** Single Responsibility | ${isEN ? 'One class = one reason to change' : 'Uma classe = uma razao para mudar'} | ${isEN ? 'Service with business logic + db access + email sending' : 'Service com logica de negocio + acesso a banco + envio de email'} |
+| **O** Open/Closed | ${isEN ? 'Extend without modifying' : 'Estender sem modificar'} | ${isEN ? 'cascading if/else instead of strategy pattern' : 'if/else cascata em vez de strategy pattern'} |
+| **L** Liskov Substitution | ${isEN ? 'Subtypes interchangeable with base type' : 'Subtipos intercambiaveis com tipo base'} | ${isEN ? 'Override that breaks the interface contract' : 'Override que quebra contrato da interface'} |
+| **I** Interface Segregation | ${isEN ? 'Specific interfaces, not one fat one' : 'Interfaces especificas, nao uma gorda'} | ${isEN ? 'Interface with 15 methods of which the client uses 2' : 'Interface com 15 metodos dos quais o cliente usa 2'} |
+| **D** Dependency Inversion | ${isEN ? 'Depend on abstractions, inject concretes' : 'Depender de abstracoes, injetar concretos'} | ${isEN ? '`new ConcreteRepository()` inside the service' : '`new ConcreteRepository()` dentro do service'} |
+
+---
+
+## ${isEN ? 'Frontend: SOLID + DDD adapted' : 'Frontend: SOLID + DDD adaptado'}
+
+| ${isEN ? 'Concept' : 'Conceito'} | Frontend |
+|----------|----------|
+| Entity/VO | ${isEN ? 'TypeScript types/interfaces that mirror the backend domain' : 'TypeScript types/interfaces que espelham o dominio do back'} |
+| Bounded Context | ${isEN ? 'Feature module (`/auth`, `/payments`) — do not import from another feature directly' : 'Feature module (`/auth`, `/payments`) — nao importar de outro feature diretamente'} |
+| Domain Service | ${isEN ? 'Custom hook or composable that encapsulates UI business logic' : 'Custom hook ou composable que encapsula logica de negocio de UI'} |
+| Repository | ${isEN ? 'Service layer — all fetch/axios centralized, never inside a component' : 'Service layer — todo fetch/axios centralizado, nunca dentro de componente'} |
+| S — SRP | ${isEN ? 'One component = one visual or interaction responsibility' : 'Um componente = uma responsabilidade visual ou de interacao'} |
+| O — OCP | ${isEN ? 'Component composition instead of excessive conditional props' : 'Composicao de componentes em vez de props condicionais excessivos'} |
+| D — DIP | ${isEN ? 'Inject services via props/context, do not import directly' : 'Injetar servicos via props/context, nao importar diretamente'} |
 `
 }
 
@@ -285,6 +588,108 @@ function buildSpec(vars) {
     .replace(/\{\{LANG\}\}/g, vars.LANG)
 }
 
+// --- Helpers ---
+
+// Lê o Projeto.md/Project.md do vault Freestyled e extrai name/description/stack
+export function readFreestyledRoot(lang) {
+  const vaultPath = join(process.cwd(), '.cortex')
+  const rootFile = lang === 'en' ? 'Project.md' : 'Projeto.md'
+  const filePath = join(vaultPath, rootFile)
+  if (!existsSync(filePath)) return {}
+
+  const lines = readFileSync(filePath, 'utf8').split('\n')
+
+  const name = (lines.find(l => l.startsWith('# ')) || '').replace(/^# /, '').trim()
+
+  const sobreIdx = lines.findIndex(l => /^## (Sobre|About)/.test(l))
+  let description = ''
+  if (sobreIdx >= 0) {
+    for (let i = sobreIdx + 1; i < lines.length; i++) {
+      const line = lines[i].trim()
+      if (line && !line.startsWith('#') && !line.startsWith('|') && !line.startsWith('-') && !line.startsWith('`')) {
+        description = line
+        break
+      }
+    }
+  }
+
+  const stackLine = lines.find(l => l.includes('**Stack**'))
+  const stack = stackLine ? (stackLine.split('|')[2] || '').trim() : ''
+
+  return { name, description, stack }
+}
+
+// Escreve todas as notas do modo Projeto (exceto Memoria Projeto.md que é tratada separadamente)
+// safe = true: só cria arquivos que não existem (usado na migração)
+function writeProjetoNotes(vaultPath, vars, safe = false) {
+  const { LANG } = vars
+  const isEN = LANG === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+
+  const w = (file, content) => {
+    const p = join(vaultPath, file)
+    if (safe && existsSync(p)) return
+    writeFileSync(p, content)
+  }
+
+  // Raiz
+  w('MANIFESTO.md', buildManifesto(LANG))
+  w('Health Check.md', buildHealthCheck(LANG))
+  w('Changelog.md', buildChangelog(LANG))
+  w(isEN ? 'Technical FAQ.md' : 'FAQ Tecnico.md',
+    buildEmptyNote(isEN ? 'Technical FAQ' : 'FAQ Tecnico', '#faq', isEN ? 'Frequently asked questions' : 'Perguntas frequentes', back, LANG))
+  w('Getting Started.md',
+    buildEmptyNote('Getting Started', '#framework #onboarding', isEN ? '3 modes, 1 principle: nothing is lost' : '3 modos, 1 principio: nada se perde', back, LANG))
+
+  // Sessoes index
+  const sessDir = isEN ? 'Sessions' : 'Sessoes'
+  w(join(sessDir, isEN ? 'Sessions - Temporal Memory.md' : 'Sessoes - Memoria Temporal.md'), buildSessionsIndex(LANG))
+
+  // Decisoes
+  const decDir = isEN ? 'Decisions' : 'Decisoes'
+  w(join(decDir, isEN ? 'Locked Definitions.md' : 'Definicoes Travadas.md'), buildLockedDefinitions(LANG))
+  w(join(decDir, isEN ? 'Open Questions.md' : 'Questoes em Aberto.md'),
+    buildEmptyNote(isEN ? 'Open Questions' : 'Questoes em Aberto', isEN ? '#decisions' : '#decisoes', isEN ? 'Items requiring definition before implementing' : 'Itens que precisam de definicao antes de implementar', back, LANG))
+  w(join(decDir, 'Anti-patterns.md'),
+    buildEmptyNote('Anti-patterns', isEN ? '#decisions' : '#decisoes', isEN ? 'What NEVER to do in this project' : 'O que NUNCA fazer neste projeto', back, LANG))
+
+  // Dominio
+  const domDir = isEN ? 'Domain' : 'Dominio'
+  w(join(domDir, isEN ? 'Domain Glossary.md' : 'Glossario de Dominio.md'),
+    buildEmptyNote(isEN ? 'Domain Glossary' : 'Glossario de Dominio', isEN ? '#domain' : '#dominio', isEN ? 'Business terms' : 'Termos do negocio', back, LANG))
+  w(join(domDir, isEN ? 'Entities.md' : 'Entidades.md'), buildEntidades(LANG))
+  w(join(domDir, isEN ? 'Domain Events.md' : 'Eventos de Dominio.md'), buildDomainEvents(LANG))
+
+  // Arquitetura
+  const archDir = isEN ? 'Architecture' : 'Arquitetura'
+  const archNotes = isEN ? [
+    { file: 'Code Patterns.md',          title: 'Code Patterns',           tags: '#architecture',       callout: 'Real examples — copy, do not invent' },
+    { file: 'Module Map.md',             title: 'Module Map',              tags: '#architecture',       callout: 'Who does what — module dependencies' },
+    { file: 'Test Strategy.md',          title: 'Test Strategy',           tags: '#architecture',       callout: 'How to test in this project — tests are mandatory' },
+    { file: 'API Contracts.md',          title: 'API Contracts',           tags: '#architecture',       callout: 'Endpoints exposed by the system (back → front)' },
+    { file: 'Architecture Decisions.md', title: 'Architecture Decisions',  tags: '#architecture #adr',  callout: 'ADRs — Architecture Decision Records' },
+    { file: 'Integrations.md',           title: 'Integrations',            tags: '#architecture',       callout: 'External services consumed by the system' },
+  ] : [
+    { file: 'Padroes de Codigo.md',       title: 'Padroes de Codigo',       tags: '#arquitetura',        callout: 'Exemplos reais — copiar, nao inventar' },
+    { file: 'Mapa de Modulos.md',         title: 'Mapa de Modulos',         tags: '#arquitetura',        callout: 'Quem faz o que — dependencias entre modulos' },
+    { file: 'Estrategia de Testes.md',    title: 'Estrategia de Testes',    tags: '#arquitetura',        callout: 'Como testar neste projeto — testes obrigatorios' },
+    { file: 'Contratos API.md',           title: 'Contratos API',           tags: '#arquitetura',        callout: 'Endpoints que o sistema expoe (back → front)' },
+    { file: 'Decisoes de Arquitetura.md', title: 'Decisoes de Arquitetura', tags: '#arquitetura #adr',   callout: 'ADRs — Architectural Decision Records' },
+    { file: 'Integracoes.md',             title: 'Integracoes',             tags: '#arquitetura',        callout: 'Servicos externos consumidos pelo sistema' },
+  ]
+
+  for (const note of archNotes) {
+    w(join(archDir, note.file), buildEmptyNote(note.title, note.tags, note.callout, back, LANG))
+  }
+  w(join(archDir, 'Clean Architecture.md'), buildCleanArch(LANG))
+  w(join(archDir, 'Bounded Contexts.md'), buildBoundedContexts(LANG))
+
+  // Regras de negocio
+  const rulesDir = isEN ? 'Business Rules' : 'Regras de Negocio'
+  w(join(rulesDir, isEN ? 'General Rules.md' : 'Regras Gerais.md'),
+    buildEmptyNote(isEN ? 'General Rules' : 'Regras Gerais', isEN ? '#rules' : '#regras', isEN ? 'Validated rules that govern the system' : 'Regras validadas que governam o sistema', back, LANG))
+}
+
 // --- Main ---
 
 export function createVault(vars) {
@@ -293,88 +698,58 @@ export function createVault(vars) {
   const isEN = LANG === 'en'
   const isLivre = MODE === 'Freestyled' || MODE === 'Livre' || MODE === 'Free'
   const dirs = DIRS[isEN ? 'en' : 'pt'][isLivre ? 'livre' : 'projeto']
-  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
 
-  // Criar diretório raiz + subdiretórios
   mkdirSync(vaultPath, { recursive: true })
   for (const dir of dirs) {
     mkdirSync(join(vaultPath, dir), { recursive: true })
   }
 
-  // Arquivos base (ambos os modos)
   writeFileSync(join(vaultPath, '.gitignore'), '# Obsidian\n.obsidian/\n.trash/\n')
   writeFileSync(join(vaultPath, '.spec.md'), buildSpec(vars))
 
-  // --- Modo Livre ---
   if (isLivre) {
-    const rootFile = isEN ? 'Project.md' : 'Projeto.md'
-    writeFileSync(join(vaultPath, rootFile), buildLivreRoot(vars, LANG))
+    writeFileSync(join(vaultPath, isEN ? 'Project.md' : 'Projeto.md'), buildLivreRoot(vars, LANG))
     console.log('  ✓ Vault criado em .cortex/')
     return
   }
 
-  // --- Modo Projeto ---
-
-  // Nota raiz
+  // Modo Projeto
   writeFileSync(join(vaultPath, isEN ? 'Project Memory.md' : 'Memoria Projeto.md'), buildProjectMemory(vars, LANG))
+  writeProjetoNotes(vaultPath, vars)
+  console.log('  ✓ Vault criado em .cortex/')
+}
 
-  // Notas raiz extras
-  writeFileSync(join(vaultPath, 'MANIFESTO.md'), buildManifesto(LANG))
-  writeFileSync(join(vaultPath, 'Health Check.md'), buildHealthCheck(LANG))
-  writeFileSync(join(vaultPath, 'Changelog.md'), buildChangelog(LANG))
-  writeFileSync(join(vaultPath, isEN ? 'Technical FAQ.md' : 'FAQ Tecnico.md'),
-    buildEmptyNote(isEN ? 'Technical FAQ' : 'FAQ Tecnico', isEN ? '#faq' : '#faq', isEN ? 'Frequently asked questions' : 'Perguntas frequentes', back, LANG))
-  writeFileSync(join(vaultPath, 'Getting Started.md'),
-    buildEmptyNote('Getting Started', '#framework #onboarding', isEN ? '3 modes, 1 principle: nothing is lost' : '3 modos, 1 principio: nada se perde', back, LANG))
+export function migrateVault(vars) {
+  const { LANG } = vars
+  const vaultPath = join(process.cwd(), '.cortex')
+  const isEN = LANG === 'en'
+  const freeRootName = isEN ? 'Project' : 'Projeto'
 
-  // Sessoes
-  const sessDir = isEN ? 'Sessions' : 'Sessoes'
-  const sessIndex = isEN ? 'Sessions - Temporal Memory.md' : 'Sessoes - Memoria Temporal.md'
-  writeFileSync(join(vaultPath, sessDir, sessIndex), buildSessionsIndex(LANG))
-
-  // Decisoes
-  const decDir = isEN ? 'Decisions' : 'Decisoes'
-  writeFileSync(join(vaultPath, decDir, isEN ? 'Locked Definitions.md' : 'Definicoes Travadas.md'), buildLockedDefinitions(LANG))
-  writeFileSync(join(vaultPath, decDir, isEN ? 'Open Questions.md' : 'Questoes em Aberto.md'),
-    buildEmptyNote(isEN ? 'Open Questions' : 'Questoes em Aberto', isEN ? '#decisions' : '#decisoes', isEN ? 'Items requiring definition before implementing' : 'Itens que precisam de definicao antes de implementar', back, LANG))
-  writeFileSync(join(vaultPath, decDir, 'Anti-patterns.md'),
-    buildEmptyNote('Anti-patterns', isEN ? '#decisions' : '#decisoes', isEN ? 'What NEVER to do in this project' : 'O que NUNCA fazer neste projeto', back, LANG))
-
-  // Dominio
-  const domDir = isEN ? 'Domain' : 'Dominio'
-  writeFileSync(join(vaultPath, domDir, isEN ? 'Domain Glossary.md' : 'Glossario de Dominio.md'),
-    buildEmptyNote(isEN ? 'Domain Glossary' : 'Glossario de Dominio', isEN ? '#domain' : '#dominio', isEN ? 'Business terms' : 'Termos do negocio', back, LANG))
-  writeFileSync(join(vaultPath, domDir, isEN ? 'Entities.md' : 'Entidades.md'),
-    buildEmptyNote(isEN ? 'Entities' : 'Entidades', isEN ? '#domain #schema' : '#dominio #schema', isEN ? 'Real database fields — check before coding' : 'Campos reais do banco — consultar antes de codar', back, LANG))
-
-  // Arquitetura
-  const archDir = isEN ? 'Architecture' : 'Arquitetura'
-  const archNotes = isEN ? [
-    { file: 'Code Patterns.md', title: 'Code Patterns', tags: '#architecture', callout: 'Real examples — copy, do not invent' },
-    { file: 'Module Map.md', title: 'Module Map', tags: '#architecture', callout: 'Who does what — module dependencies' },
-    { file: 'Test Strategy.md', title: 'Test Strategy', tags: '#architecture', callout: 'How to test in this project — tests are mandatory' },
-    { file: 'API Contracts.md', title: 'API Contracts', tags: '#architecture', callout: 'Endpoints exposed by the system (back → front)' },
-    { file: 'Architecture Decisions.md', title: 'Architecture Decisions', tags: '#architecture #adr', callout: 'ADRs — Architecture Decision Records' },
-    { file: 'Integrations.md', title: 'Integrations', tags: '#architecture', callout: 'External services consumed by the system' },
-    { file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#architecture', callout: 'Clean Architecture principles applied to the project' },
-  ] : [
-    { file: 'Padroes de Codigo.md', title: 'Padroes de Codigo', tags: '#arquitetura', callout: 'Exemplos reais — copiar, nao inventar' },
-    { file: 'Mapa de Modulos.md', title: 'Mapa de Modulos', tags: '#arquitetura', callout: 'Quem faz o que — dependencias entre modulos' },
-    { file: 'Estrategia de Testes.md', title: 'Estrategia de Testes', tags: '#arquitetura', callout: 'Como testar neste projeto — testes obrigatorios' },
-    { file: 'Contratos API.md', title: 'Contratos API', tags: '#arquitetura', callout: 'Endpoints que o sistema expoe (back → front)' },
-    { file: 'Decisoes de Arquitetura.md', title: 'Decisoes de Arquitetura', tags: '#arquitetura #adr', callout: 'ADRs — Architectural Decision Records' },
-    { file: 'Integracoes.md', title: 'Integracoes', tags: '#arquitetura', callout: 'Servicos externos consumidos pelo sistema' },
-    { file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#arquitetura', callout: 'Principios de Clean Architecture aplicados ao projeto' },
-  ]
-
-  for (const note of archNotes) {
-    writeFileSync(join(vaultPath, archDir, note.file), buildEmptyNote(note.title, note.tags, note.callout, back, LANG))
+  // Criar diretórios do Projeto que não existem no Freestyled
+  const newDirs = DIRS[isEN ? 'en' : 'pt'].projeto.filter(d =>
+    !DIRS[isEN ? 'en' : 'pt'].livre.includes(d)
+  )
+  for (const dir of newDirs) {
+    mkdirSync(join(vaultPath, dir), { recursive: true })
   }
 
-  // Regras de negocio
-  const rulesDir = isEN ? 'Business Rules' : 'Regras de Negocio'
-  writeFileSync(join(vaultPath, rulesDir, isEN ? 'General Rules.md' : 'Regras Gerais.md'),
-    buildEmptyNote(isEN ? 'General Rules' : 'Regras Gerais', isEN ? '#rules' : '#regras', isEN ? 'Validated rules that govern the system' : 'Regras validadas que governam o sistema', back, LANG))
+  // Atualizar .spec.md com spec do Projeto
+  writeFileSync(join(vaultPath, '.spec.md'), buildSpec(vars))
 
-  console.log('  ✓ Vault criado em .cortex/')
+  // Criar Memoria Projeto.md com referência ao contexto original
+  const memFile = isEN ? 'Project Memory.md' : 'Memoria Projeto.md'
+  const migrationNote = [
+    '',
+    '---',
+    '',
+    `> [!info] ${isEN ? 'Migrated from Freestyled' : 'Migrado de Freestyled'}`,
+    `> ${isEN ? 'Original context' : 'Contexto original'}: [[${freeRootName}]] · ${isEN ? 'Sessions and contexts preserved.' : 'Sessoes e contextos preservados.'}`,
+    '',
+  ].join('\n')
+  writeFileSync(join(vaultPath, memFile), buildProjectMemory(vars, LANG) + migrationNote)
+
+  // Criar notas do Projeto sem sobrescrever o que já existe
+  writeProjetoNotes(vaultPath, vars, true)
+
+  console.log('  ✓ Vault migrado para modo Projeto em .cortex/')
 }

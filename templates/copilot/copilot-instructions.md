@@ -13,17 +13,19 @@ ANTES de escrever qualquer codigo, leia estas notas do vault:
 3. `./.cortex/Decisoes/Anti-patterns.md` — lista do que NUNCA fazer neste projeto.
 4. `./.cortex/Arquitetura/Mapa de Modulos.md` — verificar se modulo/logica ja existe.
 5. `./.cortex/Arquitetura/Estrategia de Testes.md` — como testar neste projeto.
+6. `./.cortex/Arquitetura/Bounded Contexts.md` — bounded context correto. NAO cruzar fronteiras.
+7. `./.cortex/Arquitetura/Clean Architecture.md` — camada correta + DDD building block correto + SOLID.
 
 ### Para decidir
 
-6. `./.cortex/Decisoes/Definicoes Travadas.md` — decisoes imutaveis. NAO rediscutir.
-7. `./.cortex/Decisoes/Questoes em Aberto.md` — se nao foi decidido, PERGUNTAR.
-8. `./.cortex/Regras de Negocio/Regras Gerais.md` — formulas e logica reais. NAO adivinhar.
+8. `./.cortex/Decisoes/Definicoes Travadas.md` — decisoes imutaveis. NAO rediscutir.
+9. `./.cortex/Decisoes/Questoes em Aberto.md` — se nao foi decidido, PERGUNTAR.
+10. `./.cortex/Regras de Negocio/Regras Gerais.md` — formulas e logica reais. NAO adivinhar.
 
 ### Para integrar
 
-9. `./.cortex/Arquitetura/Contratos API.md` — shape real de request/response.
-10. `./.cortex/Dominio/Glossario de Dominio.md` — termos corretos do dominio.
+11. `./.cortex/Arquitetura/Contratos API.md` — shape real de request/response.
+12. `./.cortex/Dominio/Glossario de Dominio.md` — termos corretos do dominio.
 
 ## Contextos
 

@@ -24,6 +24,21 @@ Se vault nao existe: sugerir `npx cortex-ai`.
 4. Ler `./.cortex/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
 5. Ler `./.cortex/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
 
+## DDD — ao criar qualquer classe, type ou componente
+
+1. Identificar tipo: Entity (tem ID) / Value Object (imutavel) / Aggregate (raiz de consistencia) / Domain Service (logica sem estado)
+2. Verificar bounded context em `./.cortex/Arquitetura/Bounded Contexts.md` — nao cruzar fronteiras
+3. Checar `./.cortex/Dominio/Entidades.md` — ja existe? Nao duplicar.
+4. Frontend: cada feature module = bounded context. Types devem espelhar o dominio do back.
+
+## SOLID — ao escrever codigo
+
+- **S**: uma classe/componente = uma razao para mudar
+- **O**: estender via composicao, nao modificando codigo existente
+- **L**: subtipos intercambiaveis com o tipo base
+- **I**: interfaces especificas, nao uma interface gorda
+- **D**: depender de abstracoes — injetar implementacoes via DI/props/context
+
 ## Antes de decidir
 
 6. Ler `./.cortex/Decisoes/Definicoes Travadas.md` — NAO rediscutir.

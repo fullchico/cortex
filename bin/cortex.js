@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { select, input, confirm, checkbox } from '@inquirer/prompts'
-import { detectAiTools, vaultExists } from '../src/detect.js'
+import { detectAiTools, vaultExists, detectVaultMode, detectVaultLang } from '../src/detect.js'
 import { installClaudeCode, installCursor, installCopilot, updateGitignore } from '../src/install.js'
-import { createVault } from '../src/vault.js'
+import { createVault, migrateVault, readFreestyledRoot } from '../src/vault.js'
 
 console.log()
 console.log('  ╔══════════════════════════════════════╗')
@@ -15,7 +15,81 @@ console.log(`  Projeto: ${process.cwd()}`)
 console.log()
 
 if (vaultExists()) {
-  console.log('  ⚠  Vault ja existe em .cortex/')
+  const currentMode = detectVaultMode()
+
+  if (currentMode === 'Freestyled') {
+    console.log('  Vault Freestyled detectado em .cortex/')
+    console.log()
+
+    const upgrade = await confirm({
+      message: 'Migrar para modo Projeto?',
+      default: false,
+    })
+
+    if (!upgrade) {
+      console.log()
+      console.log('  Vault Freestyled mantido.')
+      console.log()
+      process.exit(0)
+    }
+
+    console.log()
+
+    // Ler info existente do vault como defaults
+    const existingLang = detectVaultLang()
+    const existing = readFreestyledRoot(existingLang)
+
+    const migName = await input({
+      message: 'Nome do projeto:',
+      default: existing.name || undefined,
+      validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
+    })
+
+    const migDescription = await input({
+      message: 'Descricao em 1 frase:',
+      default: existing.description || undefined,
+      validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
+    })
+
+    const migStack = await input({
+      message: 'Stack principal:',
+      default: existing.stack || 'ainda nao sei',
+    })
+
+    const migLang = await select({
+      message: 'Idioma do vault:',
+      default: existingLang,
+      choices: [
+        { name: 'PT  —  Portugues', value: 'pt' },
+        { name: 'EN  —  English',   value: 'en' },
+      ],
+    })
+
+    const migVars = {
+      NAME: migName.trim(),
+      DESCRIPTION: migDescription.trim(),
+      STACK: migStack.trim(),
+      MODE: 'Projeto',
+      LANG: migLang,
+      DATE: new Date().toISOString().split('T')[0],
+    }
+
+    console.log()
+    console.log('  Migrando...')
+    console.log()
+
+    migrateVault(migVars)
+
+    console.log()
+    console.log('  ✦ Migrado para modo Projeto!')
+    console.log()
+    console.log('  Sessoes e contextos existentes preservados.')
+    console.log(`  Memoria Projeto.md referencia o [[${migLang === 'en' ? 'Project' : 'Projeto'}]] original.`)
+    console.log()
+    process.exit(0)
+  }
+
+  console.log('  ⚠  Vault Projeto ja existe em .cortex/')
   console.log()
   console.log('  Para reiniciar, remova .cortex/ e rode novamente.')
   console.log()
@@ -84,14 +158,64 @@ const name = await input({
 
 const description = await input({
   message: 'Descricao em 1 frase:',
-  transformer: (v) => v,
   validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
 })
 
-const stack = await input({
-  message: 'Stack principal:',
-  default: 'ainda nao sei',
+// ── Stack ─────────────────────────────────────────────────────────────────
+
+const projectType = await select({
+  message: 'Tipo de projeto:',
+  choices: [
+    { name: 'Fullstack   —  frontend + backend', value: 'fullstack' },
+    { name: 'Backend     —  API, servico, CLI, worker', value: 'backend' },
+    { name: 'Frontend    —  interface, SPA, app', value: 'frontend' },
+  ],
 })
+
+async function pickFront() {
+  const choice = await select({
+    message: 'Frontend:',
+    choices: [
+      { name: 'React', value: 'React' },
+      { name: 'Angular', value: 'Angular' },
+      { name: 'Vue', value: 'Vue' },
+      { name: 'Outra  —  descrever', value: 'other' },
+      { name: 'Ainda nao sei', value: 'tbd' },
+    ],
+  })
+  if (choice === 'other') {
+    return await input({ message: 'Descreva o frontend:', validate: (v) => v.trim().length > 0 || 'Campo obrigatorio' })
+  }
+  return choice === 'tbd' ? 'a definir' : choice
+}
+
+async function pickBack() {
+  const choice = await select({
+    message: 'Backend:',
+    choices: [
+      { name: 'Node.js', value: 'Node.js' },
+      { name: 'Java', value: 'Java' },
+      { name: 'Go', value: 'Go' },
+      { name: 'Outra  —  descrever', value: 'other' },
+      { name: 'Ainda nao sei', value: 'tbd' },
+    ],
+  })
+  if (choice === 'other') {
+    return await input({ message: 'Descreva o backend:', validate: (v) => v.trim().length > 0 || 'Campo obrigatorio' })
+  }
+  return choice === 'tbd' ? 'a definir' : choice
+}
+
+let stack = ''
+if (projectType === 'fullstack') {
+  const front = await pickFront()
+  const back  = await pickBack()
+  stack = `${front} + ${back}`
+} else if (projectType === 'frontend') {
+  stack = await pickFront()
+} else {
+  stack = await pickBack()
+}
 
 console.log()
 
@@ -121,6 +245,50 @@ const lang = await select({
   ],
 })
 
+// ── Boas praticas (Freestyled) ────────────────────────────────────────────
+
+let practices = []
+if (mode === 'Freestyled') {
+  const isFront = projectType === 'frontend'
+  const isBack  = projectType === 'backend'
+  const isEN    = lang === 'en'
+
+  const desc = {
+    tests: isFront
+      ? (isEN ? 'Jest + Testing Library · test behavior, not implementation'
+               : 'Jest + Testing Library · testar comportamento, nao implementacao')
+      : isBack
+      ? (isEN ? 'Jest/Vitest · unit tests for services, integration tests for endpoints'
+               : 'Jest/Vitest · unit tests para services, integration tests para endpoints')
+      : (isEN ? 'Front: Testing Library · Back: Jest/Vitest + integration tests'
+               : 'Front: Testing Library · Back: Jest/Vitest + integration tests'),
+
+    clean: isFront
+      ? (isEN ? 'Presentational vs container components · hooks extract logic · services for API calls'
+               : 'Presentational vs container · hooks extraem logica · services para chamadas API')
+      : isBack
+      ? (isEN ? 'Controller → Service → Repository · no business logic in controllers · single responsibility per layer'
+               : 'Controller → Service → Repository · sem logica de negocio no controller · responsabilidade unica por camada')
+      : (isEN ? 'Front: component layers · Back: service/repository layers · shared: no logic leaking between layers'
+               : 'Front: camadas de componente · Back: camadas service/repo · compartilhado: sem vazamento entre camadas'),
+
+    solid: isEN
+      ? 'S: one reason to change · O: extend without modifying · L: subtypes are interchangeable · I: specific interfaces · D: depend on abstractions'
+      : 'S: uma razao para mudar · O: estender sem modificar · L: subtipos intercambiaveis · I: interfaces especificas · D: depender de abstracoes',
+  }
+
+  console.log()
+  practices = await checkbox({
+    message: 'Boas praticas a adotar? (opcional — Enter para pular)',
+    instructions: '  Espaco para selecionar · Enter para confirmar',
+    choices: [
+      { name: isEN ? 'Unit tests'                      : 'Testes unitarios',              value: 'tests', description: `  ${desc.tests}` },
+      { name: 'Clean Architecture + Clean Code',                                           value: 'clean', description: `  ${desc.clean}` },
+      { name: isEN ? 'SOLID Principles'                : 'Principios SOLID',              value: 'solid', description: `  ${desc.solid}` },
+    ],
+  })
+}
+
 let hasSpec = false
 if (mode === 'Projeto') {
   console.log()
@@ -136,6 +304,8 @@ const vars = {
   STACK: stack.trim(),
   MODE: mode,
   LANG: lang,
+  PRACTICES: practices,
+  PROJECT_TYPE: projectType,
   DATE: new Date().toISOString().split('T')[0],
 }
 

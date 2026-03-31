@@ -26,3 +26,18 @@ export function detectAiTools() {
 export function vaultExists() {
   return existsSync(join(process.cwd(), '.cortex'))
 }
+
+// 'Projeto' | 'Freestyled' | null
+export function detectVaultMode() {
+  const vaultPath = join(process.cwd(), '.cortex')
+  if (!existsSync(vaultPath)) return null
+  if (existsSync(join(vaultPath, 'Decisoes')) || existsSync(join(vaultPath, 'Decisions'))) return 'Projeto'
+  return 'Freestyled'
+}
+
+// 'pt' | 'en'
+export function detectVaultLang() {
+  const vaultPath = join(process.cwd(), '.cortex')
+  if (existsSync(join(vaultPath, 'Project.md')) || existsSync(join(vaultPath, 'Project Memory.md'))) return 'en'
+  return 'pt'
+}

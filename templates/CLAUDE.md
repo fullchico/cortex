@@ -14,6 +14,17 @@ Detectar idioma: se `./.cortex/Memoria Projeto.md` existe → PT. Se `./.cortex/
 4. Ler `./.cortex/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
 5. Ler `./.cortex/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
 
+**DDD — antes de criar qualquer classe/tipo:**
+- Identificar: Entity (tem ID) / Value Object (imutavel, sem ID) / Aggregate (raiz de consistencia)
+- Verificar bounded context: o que estou criando pertence a qual contexto?
+- Ler `./.cortex/Arquitetura/Bounded Contexts.md` — nao cruzar fronteiras
+- Ler `./.cortex/Dominio/Entidades.md` — modelo existente, nao duplicar
+
+**SOLID — ao escrever codigo:**
+- S: esta classe/componente tem uma unica razao para mudar?
+- O: posso estender sem modificar codigo existente?
+- D: estou dependendo de abstracoes, nao de implementacoes concretas?
+
 **Antes de decidir:**
 
 6. Ler `./.cortex/Decisoes/Definicoes Travadas.md` — NAO rediscutir.
@@ -91,14 +102,28 @@ Quando o usuario disser "cortex end" ou "fechar sessao":
 | Modulo criado | `./.cortex/Arquitetura/Mapa de Modulos.md` |
 | Endpoint criado | `./.cortex/Arquitetura/Contratos API.md` |
 
-6. Atualizar indice `./.cortex/Sessoes/Sessoes - Memoria Temporal.md`
+6. Sugestoes de melhoria — verificar oportunidades encontradas durante a sessao:
 
-7. Confirmar:
+| Oportunidade | Verificar |
+|---|---|
+| Testes faltando | Codigo sem cobertura ou sem teste associado |
+| Clean Code | Funcoes longas, nomes confusos, comentarios desnecessarios |
+| Clean Architecture | Dependencias cruzando camadas erradas |
+| SOLID | Responsabilidade unica violada, aberta para modificacao, etc. |
+
+Regra: **nao interromper o fluxo** — se encontrou oportunidade, adicionar como `- [ ]` nos Proximos Passos da timeline. Nao sugerir o que ja esta feito.
+
+Se vault tem `./.cortex/Projeto.md` com secao `## Boas Praticas`: priorizar as praticas listadas.
+
+7. Atualizar indice `./.cortex/Sessoes/Sessoes - Memoria Temporal.md`
+
+8. Confirmar:
 ```
 Sessao salva:
 - Timeline: ./.cortex/Sessoes/timeline/YYYY-MM-DD.md
 - Contexto atualizado: <nome> (se aplicavel)
 - Refs atualizadas: [lista]
+- Sugestoes: [lista ou "nenhuma"]
 ```
 
 ---
