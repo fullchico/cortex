@@ -14,6 +14,21 @@ console.log()
 console.log(`  Projeto: ${process.cwd()}`)
 console.log()
 
+// ── Idioma ────────────────────────────────────────────────────────────────
+
+const lang = await select({
+  message: 'Idioma do vault:',
+  default: 'pt',
+  choices: [
+    { name: 'PT  —  Portugues', value: 'pt' },
+    { name: 'EN  —  English',   value: 'en' },
+  ],
+})
+
+console.log()
+
+// ── Vault existente ───────────────────────────────────────────────────────
+
 if (vaultExists()) {
   const currentMode = detectVaultMode()
 
@@ -35,20 +50,8 @@ if (vaultExists()) {
 
     console.log()
 
-    // Idioma primeiro
+    // Ler info existente do vault como defaults (usando lang detectado do vault)
     const existingLang = detectVaultLang()
-    const migLang = await select({
-      message: 'Idioma do vault:',
-      default: existingLang,
-      choices: [
-        { name: 'PT  —  Portugues', value: 'pt' },
-        { name: 'EN  —  English',   value: 'en' },
-      ],
-    })
-
-    console.log()
-
-    // Ler info existente do vault como defaults
     const existing = readFreestyledRoot(existingLang)
 
     const migName = await input({
@@ -73,7 +76,7 @@ if (vaultExists()) {
       DESCRIPTION: migDescription.trim(),
       STACK: migStack.trim(),
       MODE: 'Projeto',
-      LANG: migLang,
+      LANG: lang,
       DATE: new Date().toISOString().split('T')[0],
     }
 
@@ -87,7 +90,7 @@ if (vaultExists()) {
     console.log('  ✦ Migrado para modo Projeto!')
     console.log()
     console.log('  Sessoes e contextos existentes preservados.')
-    console.log(`  Memoria Projeto.md referencia o [[${migLang === 'en' ? 'Project' : 'Projeto'}]] original.`)
+    console.log(`  Memoria Projeto.md referencia o [[${lang === 'en' ? 'Project' : 'Projeto'}]] original.`)
     console.log()
     process.exit(0)
   }
@@ -122,7 +125,6 @@ if (vaultExists()) {
 
   if (action === 'tools') {
     console.log()
-    const existingLang = detectVaultLang()
     const detectedTools = detectAiTools()
     if (detectedTools.length > 0) {
       console.log(`  Detectado no ambiente: ${detectedTools.join(', ')}`)
@@ -140,9 +142,9 @@ if (vaultExists()) {
     console.log()
     console.log('  Configurando...')
     console.log()
-    if (toolsToInstall.includes('Claude Code')) installClaudeCode(existingLang)
-    if (toolsToInstall.includes('Cursor'))      installCursor(existingLang)
-    if (toolsToInstall.includes('Copilot'))     installCopilot(existingLang)
+    if (toolsToInstall.includes('Claude Code')) installClaudeCode(lang)
+    if (toolsToInstall.includes('Cursor'))      installCursor(lang)
+    if (toolsToInstall.includes('Copilot'))     installCopilot(lang)
     console.log()
     console.log('  ✦ Pronto!')
     console.log()
@@ -169,16 +171,6 @@ if (!isReinit) {
     process.exit(0)
   }
 }
-
-// ── Idioma ────────────────────────────────────────────────────────────────
-
-const lang = await select({
-  message: 'Idioma do vault:',
-  choices: [
-    { name: 'PT  —  Portugues', value: 'pt' },
-    { name: 'EN  —  English',   value: 'en' },
-  ],
-})
 
 console.log()
 
