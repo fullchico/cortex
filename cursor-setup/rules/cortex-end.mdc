@@ -19,25 +19,25 @@ alwaysApply: false
 | Descobertas | Bugs, insights, comportamentos inesperados |
 | Proximos passos | Pendencias para proxima sessao |
 
-3. Verificar nota do dia:
-   - Mesmo dia da nota existente → APPEND (adicionar secao "Continuacao")
-   - Dia diferente → FINALIZAR (adicionar secao "Encerramento")
-   - Nota nao existe → CRIAR nova
+3. Verificar nota do dia via filesystem (listar `<VAULT_PATH>/Sessoes/` e buscar data de hoje):
+   - Mesmo dia → editar arquivo existente, APPEND secao "Continuacao"
+   - Dia diferente → editar arquivo existente, APPEND secao "Encerramento"
+   - Nao existe → criar `<VAULT_PATH>/Sessoes/Sessao YYYY-MM-DD - Titulo.md`
 
-4. Atualizar notas de referencia se houve na conversa:
+4. Atualizar notas de referencia se houve na conversa (ler antes de editar — nao duplicar):
 
-| Aconteceu | Atualizar |
-|-----------|-----------|
-| Decisao confirmada | Decisoes/Definicoes Travadas.md |
-| Questao resolvida | Decisoes/Questoes em Aberto.md (marcar [x]) |
-| Questao nova | Decisoes/Questoes em Aberto.md (adicionar) |
-| Anti-pattern | Decisoes/Anti-patterns.md |
-| Entidade criada/alterada | Dominio/Entidades.md |
-| Termo novo | Dominio/Glossario de Dominio.md |
-| Modulo criado | Arquitetura/Mapa de Modulos.md |
-| Endpoint criado | Arquitetura/Contratos API.md |
+| Aconteceu | Arquivo |
+|-----------|---------|
+| Decisao confirmada | `<VAULT_PATH>/Decisoes/Definicoes Travadas.md` |
+| Questao resolvida | `<VAULT_PATH>/Decisoes/Questoes em Aberto.md` (marcar [x]) |
+| Questao nova | `<VAULT_PATH>/Decisoes/Questoes em Aberto.md` (adicionar) |
+| Anti-pattern | `<VAULT_PATH>/Decisoes/Anti-patterns.md` |
+| Entidade criada/alterada | `<VAULT_PATH>/Dominio/Entidades.md` |
+| Termo novo | `<VAULT_PATH>/Dominio/Glossario de Dominio.md` |
+| Modulo criado | `<VAULT_PATH>/Arquitetura/Mapa de Modulos.md` |
+| Endpoint criado | `<VAULT_PATH>/Arquitetura/Contratos API.md` |
 
-5. Atualizar indice (Sessoes - Memoria Temporal.md) se nota nova
+5. Atualizar indice (`<VAULT_PATH>/Sessoes/Sessoes - Memoria Temporal.md`) se nota nova
 
 6. Confirmar ao usuario o que foi salvo
 

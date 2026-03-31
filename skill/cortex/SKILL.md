@@ -123,11 +123,19 @@ digraph start {
 
 ### Ler contexto do vault
 
-```bash
-obsidian vault="<VAULT>" read file="<MOC>"
-obsidian vault="<VAULT>" read file="Sessoes/Sessoes - Memoria Temporal"
-# → identificar e ler ultima sessao
-obsidian vault="<VAULT>" read file="<Definicoes Travadas>"
+Usar ferramentas de filesystem diretamente:
+
+```
+# Leitura obrigatoria
+Read ~/.cortex/vaults/<VAULT>/Memoria Projeto.md
+Read ~/.cortex/vaults/<VAULT>/Sessoes/Sessoes - Memoria Temporal.md
+
+# Identificar ultima sessao
+Bash: ls ~/.cortex/vaults/<VAULT>/Sessoes/ | sort | tail -5
+Read ~/.cortex/vaults/<VAULT>/Sessoes/<ultima-sessao>.md
+
+# Decisoes travadas
+Read ~/.cortex/vaults/<VAULT>/Decisoes/Definicoes Travadas.md
 ```
 
 ### Nota de hoje
@@ -189,28 +197,33 @@ Conversa curta = nota curta. Nao forcar conteudo.
 
 ### Logica de dia
 
-| Situacao | Acao |
+Verificar se nota existe:
+```
+Bash: ls ~/.cortex/vaults/<VAULT>/Sessoes/ | grep <DATA_HOJE>
+```
+
+| Situacao | Acao via filesystem |
 |----------|------|
-| **Mesmo dia** | APPEND `## Continuacao — [Tema]`. NAO finalizar. |
-| **Dia diferente** | FINALIZAR `## Encerramento` com resumo + proximos passos. |
-| **Nota nao existe** | CRIAR nota completa. |
+| **Mesmo dia** | `Edit` nota existente — APPEND `## Continuacao — [Tema]`. NAO finalizar. |
+| **Dia diferente** | `Edit` nota existente — APPEND `## Encerramento` + resumo. |
+| **Nota nao existe** | `Write` nota nova em `~/.cortex/vaults/<VAULT>/Sessoes/Sessao YYYY-MM-DD - Titulo.md` |
 
 ### Atualizar notas de referencia
 
-Se houve na conversa:
+Se houve na conversa, usar Read antes de Edit (nao duplicar):
 
-| Aconteceu... | Atualizar... |
+| Aconteceu... | Arquivo a atualizar |
 |---|---|
-| Decisao confirmada | [[Definicoes Travadas]] |
-| Questao resolvida | [[Questoes em Aberto]] (marcar [x]) |
-| Questao nova | [[Questoes em Aberto]] (adicionar) |
-| Anti-pattern | [[Anti-patterns]] |
-| Entidade criada/alterada | [[Entidades]] |
-| Termo novo | [[Glossario de Dominio]] |
-| Modulo criado | [[Mapa de Modulos]] |
-| Endpoint criado | [[Contratos API]] |
+| Decisao confirmada | `~/.cortex/vaults/<VAULT>/Decisoes/Definicoes Travadas.md` |
+| Questao resolvida | `~/.cortex/vaults/<VAULT>/Decisoes/Questoes em Aberto.md` (marcar [x]) |
+| Questao nova | `~/.cortex/vaults/<VAULT>/Decisoes/Questoes em Aberto.md` (adicionar) |
+| Anti-pattern | `~/.cortex/vaults/<VAULT>/Decisoes/Anti-patterns.md` |
+| Entidade criada/alterada | `~/.cortex/vaults/<VAULT>/Dominio/Entidades.md` |
+| Termo novo | `~/.cortex/vaults/<VAULT>/Dominio/Glossario de Dominio.md` |
+| Modulo criado | `~/.cortex/vaults/<VAULT>/Arquitetura/Mapa de Modulos.md` |
+| Endpoint criado | `~/.cortex/vaults/<VAULT>/Arquitetura/Contratos API.md` |
 
-Regra: ler antes de adicionar — nao duplicar.
+Regra: Read antes de Edit — nao duplicar.
 
 ### Confirmar
 

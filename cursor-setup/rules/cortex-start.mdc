@@ -10,13 +10,13 @@ alwaysApply: false
 
 1. Identificar o vault do projeto (perguntar se nao souber o path)
 
-2. Ler contexto:
-   - Memoria Projeto.md (visao geral)
-   - Sessoes/Sessoes - Memoria Temporal.md (identificar ultima sessao)
-   - Ultima sessao (ler conteudo — pendencias, decisoes)
-   - Decisoes/Definicoes Travadas.md (regras imutaveis)
+2. Ler contexto via filesystem (substituir <VAULT_PATH> pelo path real):
+   - `<VAULT_PATH>/Memoria Projeto.md` — visao geral do projeto
+   - `<VAULT_PATH>/Sessoes/Sessoes - Memoria Temporal.md` — indice de sessoes
+   - Listar arquivos em `<VAULT_PATH>/Sessoes/` e ler a ultima sessao
+   - `<VAULT_PATH>/Decisoes/Definicoes Travadas.md` — regras imutaveis
 
-3. Verificar se ja tem nota de hoje:
+3. Verificar se ja tem nota de hoje (buscar `Sessao <YYYY-MM-DD>` em `<VAULT_PATH>/Sessoes/`):
    - Se SIM: retomar (nao criar nova — 1 nota por dia)
    - Se NAO: criar nota nova com pendencias herdadas
 

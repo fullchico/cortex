@@ -8,7 +8,7 @@ alwaysApply: true
 
 ## Vault path
 
-Os vaults moram em `~/~/.cortex/vaults/<projeto>/vaults/<nome-projeto>/` (criados por `cortex init`).
+Os vaults moram em `~/.cortex/vaults/<nome-projeto>/` (criados por `cortex init`).
 Para identificar qual vault usar, verificar o nome do projeto atual ou perguntar ao usuario.
 
 ## Antes de codar (OBRIGATORIO)
