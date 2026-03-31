@@ -9,7 +9,20 @@ Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta a
 Na raiz do seu projeto:
 
 ```bash
+# Via npm (quando publicado)
 npx cortex-ai
+
+# Via GitHub (sem precisar publicar no npm)
+npx github:fullchico/cortex
+
+# Instalar globalmente via GitHub
+npm install -g github:fullchico/cortex
+cortex-ai
+
+# Local (clonar e linkar)
+git clone https://github.com/fullchico/cortex.git
+cd cortex && npm link
+cortex-ai
 ```
 
 O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
