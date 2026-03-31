@@ -31,24 +31,24 @@ if (detected.length > 0) {
   console.log(`  Detectado: ${detected.join(', ')}\n`)
 }
 
-// Sempre perguntar — instalacao e opcional e pode ser multipla
+// Sempre perguntar — sem pre-selecao, escolha e sempre manual
 const aiTools = await checkbox({
   message: 'Quais AI tools configurar? (espaco para selecionar, enter para confirmar)',
+  instructions: detected.length > 0
+    ? `  Detectado no ambiente: ${detected.join(', ')}`
+    : undefined,
   choices: [
     {
       name: 'Claude Code — cria CLAUDE.md com protocolo e comandos cortex',
       value: 'Claude Code',
-      checked: detected.includes('Claude Code'),
     },
     {
       name: 'Cursor — cria .cursor/rules/ com protocol, start e end',
       value: 'Cursor',
-      checked: detected.includes('Cursor'),
     },
     {
       name: 'Copilot — cria .github/copilot-instructions.md',
       value: 'Copilot',
-      checked: detected.includes('Copilot'),
     },
   ],
 })
