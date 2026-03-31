@@ -9,36 +9,55 @@ Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta a
 Na raiz do seu projeto:
 
 ```bash
-# Via npm (quando publicado)
+# Via npm
 npx cortex-ai
 
-# Via GitHub (sem precisar publicar no npm)
+# Via GitHub (sem publicar no npm)
 npx github:fullchico/cortex
 
-# Instalar globalmente via GitHub
+# Global
 npm install -g github:fullchico/cortex
-cortex-ai
 
-# Local (clonar e linkar)
+# Local (dev)
 git clone https://github.com/fullchico/cortex.git
 cd cortex && npm link
-cortex-ai
 ```
 
 O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 
 ```
-? Qual AI tool voce usa?          Claude Code / Cursor / Copilot / Todos
-? Nome do projeto:                my-app
-? Descricao (1 frase):            Sistema de gestao de tarefas
-? Stack:                          Node.js + React + PostgreSQL
-? Modo:                           Freestyled / Projeto
-? Idioma:                         PT / EN
-? Tem spec ou PRD para importar?  S/N
+? Inicializar vault em /seu-projeto/.cortex/ ?  Y
 
-  ✓ Criou CLAUDE.md
-  ✓ Criou .cursor/rules/cortex-*.mdc
-  ✓ Criou .github/copilot-instructions.md
+  Detectado no ambiente: Claude Code
+
+? Quais AI tools configurar?
+  ◉ Claude Code  →  cria CLAUDE.md com protocolo e comandos cortex
+  ◯ Cursor       →  cria .cursor/rules/ com protocol, start e end
+  ◯ Copilot      →  cria .github/copilot-instructions.md
+
+? Nome do projeto:        my-app
+? Descricao em 1 frase:   Sistema de gestao de tarefas
+
+? Tipo de projeto:
+  ❯ Fullstack   —  frontend + backend
+    Backend     —  API, servico, CLI, worker
+    Frontend    —  interface, SPA, app
+
+? Frontend:  React
+? Backend:   Node.js
+
+? Modo do vault:
+  ❯ Freestyled  ✦  minimo e organico (recomendado)
+    Projeto     ✦  vault completo com DDD + SOLID
+
+? Idioma:  PT
+
+? Boas praticas a adotar?   [Freestyled]
+  ◉ Testes unitarios
+  ◯ Clean Architecture + Clean Code
+  ◉ Principios SOLID
+
+  ✓ Cortex adicionado ao CLAUDE.md existente
   ✓ Vault criado em ./.cortex/
   ✓ Adicionou .cortex/ ao .gitignore
 
@@ -58,23 +77,58 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 
 ### Freestyled ✦ recomendado
 
-Para devs no dia a dia. Zero configuracao. Vault minimo que cresce organicamente.
+Para devs no dia a dia. Zero configuracao. Vault minimo que cresce organicamente com o uso.
 
 ```
 .cortex/
-├── Projeto.md
+├── Projeto.md          ← sobre o projeto + boas praticas escolhidas
 └── Sessoes/
-    ├── timeline/
-    └── contextos/
+    ├── timeline/       ← uma nota por dia de trabalho
+    └── contextos/      ← ilhas de conhecimento por area
 ```
+
+Na inicializacao, escolha as boas praticas a adotar — salvas no `Projeto.md` e respeitadas pela IA durante as sessoes:
+
+- **Testes unitarios** — exemplos especificos por stack (Testing Library, Jest, testify...)
+- **Clean Architecture + Clean Code** — camadas por tipo de projeto (front/back/fullstack)
+- **Principios SOLID** — checklist ativo durante o desenvolvimento
 
 Contextos surgem com o uso — a IA sugere no final de cada sessao.
 
 ### Projeto
 
-Para projetos com estrutura definida, time, ou spec/PRD. Vault completo com decisoes, arquitetura, entidades, regras de negocio.
+Para projetos com estrutura definida, time, spec/PRD, ou que adotam DDD. Vault completo.
 
-Durante o init:
+```
+.cortex/
+├── Memoria Projeto.md
+├── Dominio/
+│   ├── Entidades.md            ← Entity / Value Object / Aggregate
+│   ├── Eventos de Dominio.md   ← Domain Events
+│   └── Glossario de Dominio.md ← linguagem ubiqua
+├── Arquitetura/
+│   ├── Clean Architecture.md   ← camadas + DDD building blocks + SOLID
+│   ├── Bounded Contexts.md     ← fronteiras de contexto (front e back)
+│   ├── Padroes de Codigo.md
+│   ├── Mapa de Modulos.md
+│   ├── Estrategia de Testes.md
+│   ├── Contratos API.md
+│   ├── Decisoes de Arquitetura.md
+│   └── Integracoes.md
+├── Decisoes/
+│   ├── Definicoes Travadas.md
+│   ├── Questoes em Aberto.md
+│   └── Anti-patterns.md
+├── Regras de Negocio/
+│   └── Regras Gerais.md
+└── Sessoes/
+    ├── timeline/
+    └── contextos/
+```
+
+DDD e SOLID sao parte do protocolo ativo — antes de criar qualquer classe, a IA identifica se e Entity, Value Object ou Aggregate, e verifica o bounded context correto.
+
+**Importar spec/PRD:**
 ```
 "Tem spec, PRD ou docs para importar?"
 → Sim → diga "cortex start" e cole o doc. A IA distribui pelo vault.
@@ -83,12 +137,54 @@ Durante o init:
 
 ---
 
+## Migracao Freestyled → Projeto
+
+Comecou no modo Freestyled e o projeto cresceu? Rode `npx cortex-ai` novamente:
+
+```
+  Vault Freestyled detectado em .cortex/
+
+? Migrar para modo Projeto?  Y
+
+? Nome do projeto:      (MeuApp)        ← pre-preenchido do vault
+? Descricao:            (Sistema de tarefas)
+? Stack:                (React + Node.js)
+
+  ✓ Vault migrado para modo Projeto em .cortex/
+
+  Sessoes e contextos existentes preservados.
+  Memoria Projeto.md referencia o [[Projeto]] original.
+```
+
+Sessoes, timeline e contextos existentes sao preservados. O `Projeto.md` original vira referencia wikilink na nova `Memoria Projeto.md`.
+
+---
+
+## Superset — projetos com CLAUDE.md ou regras existentes
+
+Se o projeto ja tem um `CLAUDE.md` ou `copilot-instructions.md`, o Cortex **nao sobrescreve** — adiciona o protocolo como bloco delimitado ao final:
+
+```markdown
+# Instrucoes do time             ← conteudo original preservado
+
+Nao usar var. Sempre TypeScript.
+
+<!-- cortex:start -->             ← bloco cortex adicionado
+# Cortex — AI Memory Framework
+...
+<!-- cortex:end -->
+```
+
+Na proxima vez que rodar, detecta o bloco e pula sem modificar.
+
+---
+
 ## Fluxo diario
 
 ```
-cortex start auth     → IA carrega contexto auth + dependencias + timeline recente
+cortex start auth     → IA carrega contexto auth + depends + timeline recente
   trabalhar...        → IA consulta vault antes de codar
-cortex end            → salva decisoes, atualiza contexto, sugere novo contexto se necessario
+cortex end            → salva decisoes, atualiza contexto, sugere melhorias
 ```
 
 ---
@@ -128,7 +224,7 @@ cortex context payments
 |---------|-----------|
 | `cortex start` | Abre sessao. Pergunta no que vai trabalhar. |
 | `cortex start auth` | Abre sessao carregando o contexto `auth`. |
-| `cortex end` | Fecha sessao. Salva timeline e contexto. |
+| `cortex end` | Fecha sessao. Salva timeline, contexto e sugere melhorias. |
 | `cortex context <nome>` | Cria novo contexto. |
 
 ---
@@ -144,28 +240,15 @@ my-project/
 │   └── cortex-end.mdc
 ├── .github/
 │   └── copilot-instructions.md     ← Copilot (commitado)
-├── .cortex/                         ← vault (gitignored)
+├── .cortex/                        ← vault (gitignored)
 │   ├── .spec.md                    ← blueprint customizavel
-│   ├── Memoria Projeto.md
-│   └── Sessoes/
-│       ├── timeline/
-│       └── contextos/
+│   └── ...
 └── .gitignore                      ← .cortex/ ignorado
 ```
 
 **Commitado:** `CLAUDE.md`, `.cursor/rules/`, `.github/` — todo dev do time tem o mesmo comportamento de IA.
 
 **Gitignored:** `./.cortex/` — memoria pessoal, contexto sensivel.
-
----
-
-## Customizar o vault
-
-O blueprint do vault esta em `./.cortex/.spec.md`. Edite para:
-
-- Adicionar notas especificas do projeto
-- Remover notas que nao usa
-- Mudar labels das secoes
 
 ---
 
