@@ -374,7 +374,17 @@ if (aiTools.includes('Claude Code')) installClaudeCode(lang)
 if (aiTools.includes('Cursor'))      installCursor(lang)
 if (aiTools.includes('Copilot'))     installCopilot(lang)
 
-if (isReinit) archiveVault(archiveDate)
+if (isReinit) {
+  try {
+    archiveVault(archiveDate)
+  } catch (err) {
+    console.error()
+    console.error('  ✗ Falha ao arquivar vault anterior:', err.message)
+    console.error('  Abortando para nao corromper o vault.')
+    console.error()
+    process.exit(1)
+  }
+}
 createVault(vars)
 updateGitignore()
 
