@@ -1,0 +1,81 @@
+---
+description: Use when the user says "cortex end", "fechar sessao", "encerrar sessao", "salvar sessao". Saves conversation summary to vault.
+globs:
+alwaysApply: false
+---
+
+# Cortex End — Fechar sessao
+
+## Fluxo
+
+1. Identificar o vault do projeto
+
+2. Analisar TODA a conversa e extrair:
+
+| Campo | O que capturar |
+|-------|---------------|
+| Decisoes | Regras novas, escolhas, definicoes validadas |
+| Artefatos | Commits, arquivos criados/modificados |
+| Descobertas | Bugs, insights, comportamentos inesperados |
+| Proximos passos | Pendencias para proxima sessao |
+
+3. Verificar nota do dia:
+   - Mesmo dia da nota existente → APPEND (adicionar secao "Continuacao")
+   - Dia diferente → FINALIZAR (adicionar secao "Encerramento")
+   - Nota nao existe → CRIAR nova
+
+4. Atualizar notas de referencia se houve na conversa:
+
+| Aconteceu | Atualizar |
+|-----------|-----------|
+| Decisao confirmada | Decisoes/Definicoes Travadas.md |
+| Questao resolvida | Decisoes/Questoes em Aberto.md (marcar [x]) |
+| Questao nova | Decisoes/Questoes em Aberto.md (adicionar) |
+| Anti-pattern | Decisoes/Anti-patterns.md |
+| Entidade criada/alterada | Dominio/Entidades.md |
+| Termo novo | Dominio/Glossario de Dominio.md |
+| Modulo criado | Arquitetura/Mapa de Modulos.md |
+| Endpoint criado | Arquitetura/Contratos API.md |
+
+5. Atualizar indice (Sessoes - Memoria Temporal.md) se nota nova
+
+6. Confirmar ao usuario o que foi salvo
+
+## Template da nota
+
+```markdown
+# Sessao YYYY-MM-DD — Titulo
+
+#sessao
+
+Voltar: [[Sessoes - Memoria Temporal]]
+
+---
+
+## Contexto
+[1-2 frases]
+
+## Decisoes tomadas
+| Decisao | Definicao | Impacto |
+|---------|-----------|--------|
+
+## Artefatos gerados
+
+## Descobertas
+
+## Duvidas para o stakeholder
+- [ ]
+
+## Proximos passos
+- [ ]
+
+## Links
+- [[notas-relacionadas]]
+```
+
+## Regras
+
+- Uma nota por dia — append se ja existe
+- Nao forcar conteudo — sessao curta = nota curta
+- Ler antes de adicionar em notas de referencia — nao duplicar
+- Wikilinks obrigatorios

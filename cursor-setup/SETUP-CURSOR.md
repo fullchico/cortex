@@ -4,25 +4,34 @@
 
 ### 1. Criar o vault
 
-Copie a pasta `vault-template/` para onde quiser e abra como vault no Obsidian:
-
 ```bash
 cp -r vault-template/ ~/vaults/meu-projeto/
-# Obsidian → Open folder as vault → selecionar a pasta
+# Obsidian → Open folder as vault
 ```
 
-### 2. Copiar .cursorrules para o projeto
+### 2. Instalar Cursor Rules (escolha uma opcao)
+
+**Opcao A — Rules por projeto (recomendado)**
 
 ```bash
-cp cursor-setup/.cursorrules /path/do/seu/projeto/.cursorrules
+mkdir -p /path/do/projeto/.cursor/rules
+cp cursor-setup/rules/*.mdc /path/do/projeto/.cursor/rules/
+```
+
+**Opcao B — Rules globais (todos os projetos)**
+
+```bash
+mkdir -p ~/.cursor/rules
+cp cursor-setup/rules/*.mdc ~/.cursor/rules/
 ```
 
 ### 3. Editar o path do vault
 
-Abra `.cursorrules` e preencha o path do vault:
+Abra `cortex-protocol.mdc` e preencha:
 
 ```
-**Path do vault:** /Users/meu-user/vaults/meu-projeto/
+## Vault path
+/Users/meu-user/vaults/meu-projeto/
 ```
 
 ### 4. (Opcional) Copiar .cursorignore
@@ -30,43 +39,60 @@ Abra `.cursorrules` e preencha o path do vault:
 Se o vault estiver dentro do projeto:
 
 ```bash
-cp cursor-setup/.cursorignore /path/do/seu/projeto/.cursorignore
+cp cursor-setup/.cursorignore /path/do/projeto/.cursorignore
 ```
+
+## Rules instalados
+
+| Rule | Arquivo | Trigger | alwaysApply |
+|------|---------|---------|-------------|
+| **Protocol** | `cortex-protocol.mdc` | Sempre ativo | **sim** |
+| **Init** | `cortex-init.mdc` | "cortex init", "criar vault", "novo projeto" | nao |
+| **Start** | `cortex-start.mdc` | "cortex start", "iniciar sessao" | nao |
+| **End** | `cortex-end.mdc` | "cortex end", "fechar sessao" | nao |
+
+- **Protocol** fica sempre ativo — o Cursor consulta o vault antes de codar automaticamente
+- **Init/Start/End** ativam quando voce pede — igual ao `/cortex` no Claude Code
 
 ## Como usar
 
+### Iniciar projeto novo
+
+```
+Voce: "cortex init"
+Cursor: [pergunta nome, stack, modo → cria vault]
+```
+
 ### Inicio do dia
 
-Diga ao Cursor:
 ```
-Leia o vault em [path] — Memoria Projeto + ultima sessao + Definicoes Travadas.
-Resuma o contexto e pendencias.
+Voce: "cortex start"
+Cursor: [le vault, resume contexto e pendencias]
 ```
 
 ### Durante o trabalho
 
-O `.cursorrules` instrui o Cursor a consultar o vault automaticamente antes de codar.
+O `cortex-protocol.mdc` (alwaysApply) garante que o Cursor consulta o vault automaticamente.
 
 ### Fim do dia
 
-Diga ao Cursor:
 ```
-Crie/atualize a nota de sessao de hoje no vault.
-Registre decisoes, artefatos e proximos passos.
+Voce: "cortex end"
+Cursor: [analisa conversa, salva no vault]
 ```
 
 ## Diferenca vs Claude Code
 
 | Aspecto | Claude Code | Cursor |
 |---------|------------|--------|
-| Skill automatico | `/cortex init/start/end` | Manual (pedir ao AI) |
-| Vault access | Obsidian CLI | Leitura de arquivo (path) |
-| Sessoes | Automatizadas | Pedir ao AI |
-| Protocolo | Carregado via skill | Carregado via .cursorrules |
+| Formato | `SKILL.md` em `~/.claude/skills/` | `.mdc` em `.cursor/rules/` |
+| Comandos | `/cortex init/start/end` | Digitar "cortex init/start/end" no chat |
+| Protocolo | Dentro do SKILL.md | `cortex-protocol.mdc` (alwaysApply) |
 | Resultado | Igual — vault como fonte da verdade |
 
 ## Dicas
 
-- Mantenha o Obsidian aberto enquanto trabalha — ve mudancas em tempo real
-- Se o vault estiver FORA do projeto, o Cursor precisa do path absoluto
-- Se o vault estiver DENTRO do projeto, adicione `.cursorignore` para nao indexar `.obsidian/`
+- Mantenha o Obsidian aberto — ve mudancas em tempo real
+- Se vault FORA do projeto: usar path absoluto no protocol
+- Se vault DENTRO do projeto: adicionar `.cursorignore`
+- As rules `.mdc` podem ser versionadas no repo do projeto

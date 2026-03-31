@@ -57,8 +57,10 @@ Como quer trabalhar?
 
 ### Passo 2 — Criar estrutura
 
-Criar vault no path de projetos do usuario.
-Estrutura baseada no template Cortex (ver vault-template/ no repo).
+Criar vault em `~/.cortex/vaults/<nome-projeto>/`.
+Se `~/.cortex/vaults/` nao existir, criar.
+Se `~/.cortex/vault-template/` existir, copiar como base.
+Senao, criar arquivos seguindo a estrutura do framework.
 
 Vault minimo viavel (3 arquivos preenchidos):
 - `Memoria Projeto.md` — com nome, descricao, stack
@@ -66,6 +68,8 @@ Vault minimo viavel (3 arquivos preenchidos):
 - `Decisoes/Definicoes Travadas.md` — vazio, cresce a cada decisao
 
 Demais notas: criar vazias seguindo o template.
+
+Informar: "Vault criado em ~/.cortex/vaults/<nome>/. Abra no Obsidian como vault."
 
 ### Passo 3 — Comportamento por modo
 

@@ -1,0 +1,44 @@
+---
+description: Use when the user says "cortex start", "iniciar sessao", "abrir sessao", "comecar trabalho". Opens today's session by reading vault context and resuming pending work.
+globs:
+alwaysApply: false
+---
+
+# Cortex Start — Abrir sessao
+
+## Fluxo
+
+1. Identificar o vault do projeto (perguntar se nao souber o path)
+
+2. Ler contexto:
+   - Memoria Projeto.md (visao geral)
+   - Sessoes/Sessoes - Memoria Temporal.md (identificar ultima sessao)
+   - Ultima sessao (ler conteudo — pendencias, decisoes)
+   - Decisoes/Definicoes Travadas.md (regras imutaveis)
+
+3. Verificar se ja tem nota de hoje:
+   - Se SIM: retomar (nao criar nova — 1 nota por dia)
+   - Se NAO: criar nota nova com pendencias herdadas
+
+4. Resumir ao usuario:
+
+```
+Sessao aberta (YYYY-MM-DD):
+
+Estado: [resumo do MOC]
+
+Pendencias da ultima sessao:
+- [ ] ...
+
+Definicoes travadas recentes:
+- ...
+
+O que vamos fazer?
+```
+
+## Regras
+
+- Uma nota por dia — NUNCA criar segunda
+- Herdar pendencias da sessao anterior
+- Titulo provisorio (renomear no cortex end)
+- Vault = consulta obrigatoria antes de codar

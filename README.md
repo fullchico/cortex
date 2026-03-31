@@ -19,64 +19,120 @@ Um vault Obsidian com notas interligadas: entidades, regras, decisoes, padroes, 
 ## Instalacao
 
 ```bash
-# 1. Clone
 git clone https://github.com/fullchico/cortex.git
 cd cortex
-
-# 2. Instale (pergunta qual agent voce usa)
-
-# Mac / Linux
-chmod +x install.sh && ./install.sh
-
-# Windows (PowerShell)
-powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
-O instalador pergunta qual agent voce usa:
+Escolha seu agent e siga o guia:
 
-| Agent | Instalacao | Vault recomendado |
-|-------|-----------|-------------------|
-| **Claude Code** | Automatica (copia skill) | Qualquer path |
-| **Cursor** | Mostra comandos para copiar | Qualquer path |
-| **Copilot** | Mostra comandos para copiar | Dentro do projeto |
+| Agent | Guia | O que copiar |
+|-------|------|-------------|
+| **Claude Code** | [Setup Claude Code](#claude-code) | `skill/cortex/` → `~/.claude/skills/` |
+| **Cursor** | [Setup Cursor](#cursor) | `rules/*.mdc` → `.cursor/rules/` |
+| **Copilot** | [Setup Copilot](#github-copilot) | `copilot-instructions.md` → `.github/` |
 
-### Setup manual
+---
+
+### Claude Code
 
 ```bash
-# Claude Code
+# Copiar skill
 cp -r skill/cortex ~/.claude/skills/cortex
 
-# Cursor
-cp cursor-setup/.cursorrules /path/do/projeto/.cursorrules
-# Editar .cursorrules → preencher path do vault
+# Copiar template para ~/.cortex/
+mkdir -p ~/.cortex
+cp -r vault-template ~/.cortex/vault-template
 
-# Copilot
+# No Claude Code:
+/cortex init
+# → cria ~/.cortex/vaults/<nome-projeto>/ com toda estrutura
+# → abra no Obsidian como vault
+```
+
+Detalhes: o skill `/cortex` tem 3 comandos:
+
+| Comando | O que faz |
+|---------|-----------|
+| `/cortex init` | Cria vault. Pergunta nome, stack e modo (Construir/Decidir/Explorar). |
+| `/cortex start` | Abre sessao do dia. Le vault e resume contexto. |
+| `/cortex end` | Fecha sessao. Salva decisoes e artefatos no vault. |
+
+---
+
+### Cursor
+
+```bash
+# Copiar rules para o projeto (ou global)
+mkdir -p /path/do/projeto/.cursor/rules
+cp cursor-setup/rules/*.mdc /path/do/projeto/.cursor/rules/
+
+# Copiar template para ~/.cortex/
+mkdir -p ~/.cortex
+cp -r vault-template ~/.cortex/vault-template
+
+# No Cursor, digitar no chat:
+# "cortex init"
+# → cria ~/.cortex/vaults/<nome-projeto>/ com toda estrutura
+# → abra no Obsidian como vault
+```
+
+4 rules instalados:
+- `cortex-protocol.mdc` — **sempre ativo**, consulta vault antes de codar
+- `cortex-init.mdc` — "cortex init" → cria vault a partir do template
+- `cortex-start.mdc` — "cortex start" → abre sessao
+- `cortex-end.mdc` — "cortex end" → fecha sessao
+
+> O repo `cortex` e um instalador — copia rules + template e descarta.
+
+Ver `cursor-setup/SETUP-CURSOR.md` para detalhes.
+
+---
+
+### GitHub Copilot
+
+```bash
+# Copiar instrucoes para o projeto
 mkdir -p /path/do/projeto/.github
 cp copilot-setup/.github/copilot-instructions.md /path/do/projeto/.github/
-# Copiar vault para dentro do projeto:
-cp -r vault-template/ /path/do/projeto/docs/vault/
-# Editar copilot-instructions.md → preencher path do vault
+
+# Copiar template para ~/.cortex/
+mkdir -p ~/.cortex
+cp -r vault-template ~/.cortex/vault-template
+
+# Editar copilot-instructions.md → preencher path: ~/.cortex/vaults/<nome>/
 ```
+
+> Copilot le melhor arquivos dentro do workspace. Se preferir, copie o vault para dentro do projeto.
+> Senao, use path absoluto para `~/.cortex/vaults/<nome>/`.
+
+Ver `copilot-setup/SETUP-COPILOT.md` para detalhes.
+
+---
 
 ### Outros agents
 
-Os arquivos sao markdown padrao. Adapte:
+Os arquivos sao markdown padrao. Adapte para seu agent:
 - **Windsurf** → copiar protocolo para `.windsurfrules`
 - **Cline** → copiar para `.clinerules`
 - **Outro** → adicionar como instrucao do agente
 
-## Comandos
+---
 
-| Comando | O que faz |
-|---------|-----------|
-| `/cortex init` | Cria vault novo. Pergunta nome, stack e modo. |
-| `/cortex start` | Abre sessao do dia. Le contexto e resume pendencias. |
-| `/cortex end` | Fecha sessao. Salva decisoes e artefatos no vault. |
-
-## Estrutura do vault
+## Estrutura global (apos instalacao)
 
 ```
-meu-projeto/
+~/.cortex/
+├── vault-template/              ← template base (copiado na instalacao)
+└── vaults/
+    ├── meu-app/                 ← criado por "cortex init"
+    ├── outro-projeto/           ← criado por "cortex init"
+    └── ...
+```
+
+## Estrutura de cada vault
+
+```
+~/.cortex/vaults/meu-projeto/
 ├── Memoria Projeto.md                ← AI le primeiro
 ├── MANIFESTO.md                      ← filosofia
 ├── Getting Started.md                ← 3 modos de uso
@@ -128,9 +184,15 @@ Antes de codar, o AI consulta:
 ## Fluxo diario
 
 ```
+# Claude Code
 /cortex start       → AI le vault, resume contexto
   trabalhar...      → AI consulta vault antes de codar
 /cortex end         → salva decisoes e artefatos
+
+# Cursor / Copilot
+"Leia o vault e resuma o contexto"
+  trabalhar...      → AI consulta vault via .cursorrules / copilot-instructions
+"Salva a sessao de hoje no vault"
 ```
 
 ## Filosofia
@@ -143,19 +205,27 @@ Antes de codar, o AI consulta:
 
 ```
 cortex/
-├── README.md                    ← voce esta aqui
-├── install.sh                   ← instalador interativo
+├── README.md                         ← voce esta aqui
 ├── .gitignore
 ├── skill/
 │   └── cortex/
-│       └── SKILL.md             ← skill Claude Code (/cortex init, start, end)
+│       └── SKILL.md                  ← skill Claude Code (/cortex)
 ├── cursor-setup/
-│   ├── .cursorrules             ← protocolo Cortex para Cursor
-│   ├── .cursorignore            ← ignora .obsidian/
-│   └── SETUP-CURSOR.md         ← guia de setup
+│   ├── rules/
+│   │   ├── cortex-protocol.mdc      ← sempre ativo (consulta vault)
+│   │   ├── cortex-init.mdc          ← "cortex init"
+│   │   ├── cortex-start.mdc         ← "cortex start"
+│   │   └── cortex-end.mdc           ← "cortex end"
+│   ├── .cursorrules                  ← alternativa simples (sem rules)
+│   ├── .cursorignore
+│   └── SETUP-CURSOR.md              ← guia
 ├── copilot-setup/
 │   ├── .github/
-│   │   └── copilot-instructions.md  ← protocolo Cortex para Copilot
-│   └── SETUP-COPILOT.md        ← guia de setup
-└── vault-template/              ← template do vault (27 notas)
+│   │   └── copilot-instructions.md  ← protocolo para Copilot
+│   └── SETUP-COPILOT.md             ← guia
+└── vault-template/                   ← template do vault (27 notas)
 ```
+
+## Licenca
+
+MIT

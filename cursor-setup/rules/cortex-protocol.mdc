@@ -1,0 +1,50 @@
+---
+description: Cortex protocol — always consult the vault before writing code, making decisions, or integrating systems. Apply when working on any project that has a Cortex vault.
+globs:
+alwaysApply: true
+---
+
+# Cortex Protocol
+
+## Vault path
+
+Os vaults moram em `~/~/.cortex/vaults/<projeto>/vaults/<nome-projeto>/` (criados por `cortex init`).
+Para identificar qual vault usar, verificar o nome do projeto atual ou perguntar ao usuario.
+
+## Antes de codar (OBRIGATORIO)
+
+1. Ler `~/.cortex/vaults/<projeto>/Dominio/Entidades.md` — campos reais. NAO inventar.
+2. Ler `~/.cortex/vaults/<projeto>/Arquitetura/Padroes de Codigo.md` — copiar padroes. NAO improvisar.
+3. Ler `~/.cortex/vaults/<projeto>/Decisoes/Anti-patterns.md` — o que NUNCA fazer.
+4. Ler `~/.cortex/vaults/<projeto>/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
+5. Ler `~/.cortex/vaults/<projeto>/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
+
+## Antes de decidir
+
+6. Ler `~/.cortex/vaults/<projeto>/Decisoes/Definicoes Travadas.md` — NAO rediscutir.
+7. Ler `~/.cortex/vaults/<projeto>/Decisoes/Questoes em Aberto.md` — nao decidido? PERGUNTAR.
+8. Ler `~/.cortex/vaults/<projeto>/Regras de Negocio/Regras Gerais.md` — formulas reais. NAO adivinhar.
+
+## Antes de integrar
+
+9. Ler `~/.cortex/vaults/<projeto>/Arquitetura/Contratos API.md` — shape real.
+10. Ler `~/.cortex/vaults/<projeto>/Dominio/Glossario de Dominio.md` — termos corretos.
+
+## Regras
+
+- Clean Architecture obrigatoria
+- Testes obrigatorios
+- Vault = fonte da verdade (vault > memoria > codigo)
+- Nao adivinhar — perguntar
+- Nao rediscutir — respeitar decisoes travadas
+- Nao duplicar — reutilizar
+
+## Pos-task
+
+Sugerir registrar no vault:
+- Termo novo → Glossario
+- Campo/entidade → Entidades
+- Padrao → Padroes de Codigo
+- Anti-pattern → Anti-patterns
+- Decisao → Definicoes Travadas
+- Duvida → Questoes em Aberto
