@@ -579,7 +579,8 @@ ${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 }
 
 function buildSpec(vars) {
-  const specContent = readFileSync(join(TEMPLATES, 'vault-spec.md'), 'utf8')
+  const langDir = vars.LANG === 'en' ? 'en' : 'pt'
+  const specContent = readFileSync(join(TEMPLATES, langDir, 'vault-spec.md'), 'utf8')
   return specContent
     .replace(/\{\{NAME\}\}/g, vars.NAME)
     .replace(/\{\{DESCRIPTION\}\}/g, vars.DESCRIPTION)
@@ -591,9 +592,13 @@ function buildSpec(vars) {
 
 // --- Helpers ---
 
-// Lê o Projeto.md/Project.md do vault Freestyled e extrai name/description/stack
-export function readFreestyledRoot(lang) {
-  const vaultPath = join(process.cwd(), '.cortex')
+/**
+ * Lê o Projeto.md/Project.md do vault Freestyled e extrai name/description/stack.
+ * @param {'pt'|'en'} lang
+ * @param {{ cwd?: string }} [opts] cwd do projeto (default: process.cwd())
+ */
+export function readFreestyledRoot(lang, opts) {
+  const vaultPath = join(opts?.cwd ?? process.cwd(), '.cortex')
   const rootFile = lang === 'en' ? 'Project.md' : 'Projeto.md'
   const filePath = join(vaultPath, rootFile)
   if (!existsSync(filePath)) return {}

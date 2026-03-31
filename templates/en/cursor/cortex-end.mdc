@@ -1,0 +1,92 @@
+---
+description: Use when the user says "cortex end", "end session", "close session". Saves conversation summary to vault.
+globs:
+alwaysApply: false
+---
+
+# Cortex End — Close session
+
+## Flow
+
+1. Detect vault at `./.cortex/`
+2. Analyze the ENTIRE conversation and extract:
+
+| Field | What to capture |
+|-------|----------------|
+| Decisions | New rules, choices, validated definitions |
+| Patterns | Code structure, conventions discovered |
+| Bugs found | Issues, unexpected behavior |
+| Next steps | Pending items for the next session |
+
+3. Create/update timeline note:
+   - Check if `./.cortex/Sessions/timeline/YYYY-MM-DD.md` exists
+   - Same day → APPEND `## Continuation — [Topic]`
+   - Does not exist → create from template
+
+4. If there was an active context:
+   - Read `./.cortex/Sessions/contexts/<name>.md`
+   - Update with decisions, patterns, bugs, reference to today's session
+
+5. If there was no active context:
+   - Suggest: "We covered a lot on [detected topic]. Want to create a context?"
+
+6. Update reference notes (read before editing — do not duplicate):
+
+| What happened | File |
+|-----------|---------|
+| Decision confirmed | `./.cortex/Decisions/Locked Definitions.md` |
+| Question resolved | `./.cortex/Decisions/Open Questions.md` (mark [x]) |
+| New question | `./.cortex/Decisions/Open Questions.md` (add) |
+| Anti-pattern | `./.cortex/Decisions/Anti-patterns.md` |
+| Entity created/changed | `./.cortex/Domain/Entities.md` |
+| New term | `./.cortex/Domain/Domain Glossary.md` |
+| New module | `./.cortex/Architecture/Module Map.md` |
+| New endpoint | `./.cortex/Architecture/API Contracts.md` |
+
+7. Improvement suggestions (check opportunities from the session):
+
+| Opportunity | Check |
+|---|---|
+| Missing tests | Code without coverage or associated tests |
+| Clean Code | Long functions, confusing names, unnecessary comments |
+| Clean Architecture | Dependencies crossing wrong layers |
+| SOLID | Class with more than one responsibility, open for modification, etc. |
+
+Rule: **do not interrupt flow** — if you find one, add it as `- [ ]` under Next steps in the timeline note. Do not suggest what is already done.
+
+If the vault has `./.cortex/Project.md` with a `## Best practices` section: prioritize those practices.
+
+8. Update index `./.cortex/Sessions/Sessions - Temporal Memory.md` if new note
+
+9. Confirm:
+```
+Session saved:
+- Timeline: ./.cortex/Sessions/timeline/YYYY-MM-DD.md
+- Context: <name> (if applicable)
+- Refs updated: [list]
+```
+
+## Timeline note template
+
+```markdown
+# YYYY-MM-DD
+
+tags: [session, timeline]
+
+---
+
+## Contexts touched
+- [[contexts/<name>]] — summary
+
+## Decisions
+-
+
+## Next steps
+- [ ]
+```
+
+## Rules
+
+- Read before editing — do NOT duplicate
+- Short conversation = short note — do not force content
+- One note per day — append if it already exists

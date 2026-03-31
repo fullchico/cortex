@@ -1,0 +1,48 @@
+---
+description: Use when the user says "cortex start", "start session", "open session". Opens today's session by reading vault context and resuming pending work.
+globs:
+alwaysApply: false
+---
+
+# Cortex Start — Open session
+
+## Flow
+
+1. Detect vault at `./.cortex/`
+2. Detect language:
+   - `./.cortex/Memoria Projeto.md` → PT
+   - `./.cortex/Project Memory.md` → EN
+
+3. Read context:
+   - `./.cortex/Project Memory.md` (or `Memoria Projeto.md`) — overview
+   - List `./.cortex/Sessions/timeline/` and read the 3 most recent files
+   - `./.cortex/Decisions/Locked Definitions.md` — immutable rules
+
+4. If a context is declared (e.g. "cortex start auth"):
+   - Read `./.cortex/Sessions/contexts/auth.md`
+   - Read header `depends:` and load each listed context
+   - Read the last 3 timeline entries
+
+5. If no context: ask "what are you working on today?"
+
+6. Summarize for the user:
+
+```
+Session open — <PROJECT> (<DATE>)
+
+Context: <name> [depends: ...]
+
+Recent decisions:
+- ...
+
+Pending:
+- [ ] ...
+
+What should we do?
+```
+
+## Rules
+
+- Load only the declared context + dependencies — do not read the entire vault
+- One timeline note per day — do not create a second
+- Carry over pending items from the last session

@@ -3,7 +3,7 @@ import { installClaudeCode, installCursor, installCopilot } from '../install.js'
 import { t } from './i18n.js'
 
 /** @param {'init' | 'update'} variant */
-function buildToolChoices(lang, detected, variant) {
+export function getAiToolCheckboxChoices(lang, detected, variant) {
   const isUpdate = variant === 'update'
   return [
     {
@@ -36,7 +36,7 @@ export async function promptAiTools(lang, detected, variant) {
   return checkbox({
     message: t(lang, 'aiTools.message'),
     instructions: t(lang, 'aiTools.instructions'),
-    choices: buildToolChoices(lang, detected, variant),
+    choices: getAiToolCheckboxChoices(lang, detected, variant),
   })
 }
 

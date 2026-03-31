@@ -17,6 +17,11 @@ function wrap(content) {
   return `${MARKER_START}\n${content.trim()}\n${MARKER_END}`
 }
 
+/** @param {string} lang */
+export function templateLocaleDir(lang) {
+  return lang === 'en' ? 'en' : 'pt'
+}
+
 // Escreve arquivo novo ou appenda bloco cortex ao existente
 function installOrAppend(dest, content, label, lang) {
   if (!existsSync(dest)) {
@@ -33,43 +38,9 @@ function installOrAppend(dest, content, label, lang) {
   console.log(t(lang, 'installLog.appended', { label }))
 }
 
-// Substitui paths PT → EN nos templates para vaults EN
-const EN_PATHS = [
-  [/Sessoes\/Sessoes - Memoria Temporal\.md/g, 'Sessions/Sessions - Temporal Memory.md'],
-  [/Sessoes\/contextos\//g, 'Sessions/contexts/'],
-  [/Sessoes\/timeline\//g, 'Sessions/timeline/'],
-  [/Sessoes\//g, 'Sessions/'],
-  [/Dominio\/Glossario de Dominio\.md/g, 'Domain/Domain Glossary.md'],
-  [/Dominio\/Entidades\.md/g, 'Domain/Entities.md'],
-  [/Dominio\/Eventos de Dominio\.md/g, 'Domain/Domain Events.md'],
-  [/Dominio\//g, 'Domain/'],
-  [/Arquitetura\/Padroes de Codigo\.md/g, 'Architecture/Code Patterns.md'],
-  [/Arquitetura\/Mapa de Modulos\.md/g, 'Architecture/Module Map.md'],
-  [/Arquitetura\/Estrategia de Testes\.md/g, 'Architecture/Test Strategy.md'],
-  [/Arquitetura\/Contratos API\.md/g, 'Architecture/API Contracts.md'],
-  [/Arquitetura\/Decisoes de Arquitetura\.md/g, 'Architecture/Architecture Decisions.md'],
-  [/Arquitetura\/Integracoes\.md/g, 'Architecture/Integrations.md'],
-  [/Arquitetura\//g, 'Architecture/'],
-  [/Decisoes\/Definicoes Travadas\.md/g, 'Decisions/Locked Definitions.md'],
-  [/Decisoes\/Questoes em Aberto\.md/g, 'Decisions/Open Questions.md'],
-  [/Decisoes\//g, 'Decisions/'],
-  [/Regras de Negocio\/Regras Gerais\.md/g, 'Business Rules/General Rules.md'],
-  [/Regras de Negocio\//g, 'Business Rules/'],
-  [/Memoria Projeto\.md/g, 'Project Memory.md'],
-]
-
-function applyLang(content, lang) {
-  if (lang !== 'en') return content
-  let result = content
-  for (const [pattern, replacement] of EN_PATHS) {
-    result = result.replace(pattern, replacement)
-  }
-  return result
-}
-
 function readTemplate(relPath, lang) {
-  const raw = readFileSync(join(TEMPLATES, relPath), 'utf8')
-  return applyLang(raw, lang)
+  const dir = templateLocaleDir(lang)
+  return readFileSync(join(TEMPLATES, dir, relPath), 'utf8')
 }
 
 export function installClaudeCode(lang = 'pt') {
