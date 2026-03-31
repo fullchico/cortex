@@ -155,7 +155,3 @@ cortex/
 │   └── SETUP-COPILOT.md        ← guia de setup
 └── vault-template/              ← template do vault (27 notas)
 ```
-
-## Licenca
-
-MIT
