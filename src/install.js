@@ -5,6 +5,33 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
 
+const MARKER_START = '<!-- cortex:start -->'
+const MARKER_END   = '<!-- cortex:end -->'
+
+function hasCortex(content) {
+  return content.includes(MARKER_START)
+}
+
+function wrap(content) {
+  return `${MARKER_START}\n${content.trim()}\n${MARKER_END}`
+}
+
+// Escreve arquivo novo ou appenda bloco cortex ao existente
+function installOrAppend(dest, content, label) {
+  if (!existsSync(dest)) {
+    writeFileSync(dest, wrap(content))
+    console.log(`  ✓ Criou ${label}`)
+    return
+  }
+  const existing = readFileSync(dest, 'utf8')
+  if (hasCortex(existing)) {
+    console.log(`  ✓ ${label} ja tem protocolo Cortex`)
+    return
+  }
+  writeFileSync(dest, existing.trimEnd() + '\n\n' + wrap(content))
+  console.log(`  ✓ Cortex adicionado ao ${label} existente`)
+}
+
 // Substitui paths PT → EN nos templates para vaults EN
 const EN_PATHS = [
   [/Sessoes\/Sessoes - Memoria Temporal\.md/g, 'Sessions/Sessions - Temporal Memory.md'],
@@ -46,12 +73,7 @@ function readTemplate(relPath, lang) {
 
 export function installClaudeCode(lang = 'pt') {
   const dest = join(process.cwd(), 'CLAUDE.md')
-  if (existsSync(dest)) {
-    console.log('  ⚠  CLAUDE.md ja existe — pulando')
-    return
-  }
-  writeFileSync(dest, readTemplate('CLAUDE.md', lang))
-  console.log('  ✓ Criou CLAUDE.md')
+  installOrAppend(dest, readTemplate('CLAUDE.md', lang), 'CLAUDE.md')
 }
 
 export function installCursor(lang = 'pt') {
@@ -62,7 +84,7 @@ export function installCursor(lang = 'pt') {
   for (const rule of rules) {
     const dest = join(rulesDir, rule)
     if (existsSync(dest)) {
-      console.log(`  ⚠  .cursor/rules/${rule} ja existe — pulando`)
+      console.log(`  ✓ .cursor/rules/${rule} ja tem protocolo Cortex`)
       continue
     }
     writeFileSync(dest, readTemplate(`cursor/${rule}`, lang))
@@ -75,12 +97,7 @@ export function installCopilot(lang = 'pt') {
   mkdirSync(githubDir, { recursive: true })
 
   const dest = join(githubDir, 'copilot-instructions.md')
-  if (existsSync(dest)) {
-    console.log('  ⚠  .github/copilot-instructions.md ja existe — pulando')
-    return
-  }
-  writeFileSync(dest, readTemplate('copilot/copilot-instructions.md', lang))
-  console.log('  ✓ Criou .github/copilot-instructions.md')
+  installOrAppend(dest, readTemplate('copilot/copilot-instructions.md', lang), '.github/copilot-instructions.md')
 }
 
 export function updateGitignore() {
