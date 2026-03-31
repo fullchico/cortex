@@ -1,86 +1,82 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
 
-const PT_STRUCTURE = {
-  projeto: {
-    root: [
-      'Memoria Projeto.md',
-      'MANIFESTO.md',
-      'Getting Started.md',
-      'Health Check.md',
-      'FAQ Tecnico.md',
-      'Changelog.md',
+// --- Estruturas de diretórios ---
+
+const DIRS = {
+  pt: {
+    projeto: [
+      'Decisoes',
+      'Dominio',
+      'Arquitetura',
+      'Regras de Negocio',
+      'Sessoes',
+      'Sessoes/timeline',
+      'Sessoes/contextos',
     ],
-    dirs: {
-      'Decisoes': ['Definicoes Travadas.md', 'Questoes em Aberto.md', 'Anti-patterns.md'],
-      'Dominio': ['Glossario de Dominio.md', 'Entidades.md'],
-      'Arquitetura': [
-        'Clean Architecture.md',
-        'Estrategia de Testes.md',
-        'Padroes de Codigo.md',
-        'Mapa de Modulos.md',
-        'Decisoes de Arquitetura.md',
-        'Contratos API.md',
-        'Integracoes.md',
-      ],
-      'Regras de Negocio': ['Regras Gerais.md'],
-      'Sessoes': ['Sessoes - Memoria Temporal.md'],
-      'Sessoes/timeline': [],
-      'Sessoes/contextos': [],
-    },
+    livre: [
+      'Sessoes/timeline',
+      'Sessoes/contextos',
+    ],
   },
-  livre: {
-    root: ['Projeto.md'],
-    dirs: {
-      'Sessoes/timeline': [],
-      'Sessoes/contextos': [],
-    },
+  en: {
+    projeto: [
+      'Decisions',
+      'Domain',
+      'Architecture',
+      'Business Rules',
+      'Sessions',
+      'Sessions/timeline',
+      'Sessions/contexts',
+    ],
+    livre: [
+      'Sessions/timeline',
+      'Sessions/contexts',
+    ],
   },
 }
 
-const EN_STRUCTURE = {
-  projeto: {
-    root: [
-      'Project Memory.md',
-      'MANIFESTO.md',
-      'Getting Started.md',
-      'Health Check.md',
-      'Technical FAQ.md',
-      'Changelog.md',
-    ],
-    dirs: {
-      'Decisions': ['Locked Definitions.md', 'Open Questions.md', 'Anti-patterns.md'],
-      'Domain': ['Domain Glossary.md', 'Entities.md'],
-      'Architecture': [
-        'Clean Architecture.md',
-        'Test Strategy.md',
-        'Code Patterns.md',
-        'Module Map.md',
-        'Architecture Decisions.md',
-        'API Contracts.md',
-        'Integrations.md',
-      ],
-      'Business Rules': ['General Rules.md'],
-      'Sessions': ['Sessions - Temporal Memory.md'],
-      'Sessions/timeline': [],
-      'Sessions/contexts': [],
-    },
-  },
-  livre: {
-    root: ['Project.md'],
-    dirs: {
-      'Sessions/timeline': [],
-      'Sessions/contexts': [],
-    },
-  },
+// --- Builders ---
+
+function buildLivreRoot(vars, lang) {
+  const isEN = lang === 'en'
+  return `# ${vars.NAME}
+
+${isEN ? '#project' : '#projeto'}
+
+---
+
+## ${isEN ? 'About' : 'Sobre'}
+
+${vars.DESCRIPTION}
+
+| ${isEN ? 'Field' : 'Campo'} | ${isEN ? 'Value' : 'Valor'} |
+|-------|-------|
+| **Stack** | ${vars.STACK} |
+| **${isEN ? 'Started' : 'Inicio'}** | ${vars.DATE} |
+
+---
+
+## ${isEN ? 'How to use' : 'Como usar'}
+
+\`\`\`
+cortex start [contexto]   ${isEN ? '→ opens session, loads context' : '→ abre sessao, carrega contexto'}
+cortex end                ${isEN ? '→ saves session to timeline' : '→ salva sessao na timeline'}
+cortex context <nome>     ${isEN ? '→ creates a new context island' : '→ cria uma ilha de contexto'}
+\`\`\`
+`
 }
 
 function buildProjectMemory(vars, lang) {
   const isEN = lang === 'en'
+  const links = isEN
+    ? { entities: 'Entities', patterns: 'Code Patterns', anti: 'Anti-patterns', modules: 'Module Map', tests: 'Test Strategy', locked: 'Locked Definitions', open: 'Open Questions', rules: 'General Rules' }
+    : { entities: 'Entidades', patterns: 'Padroes de Codigo', anti: 'Anti-patterns', modules: 'Mapa de Modulos', tests: 'Estrategia de Testes', locked: 'Definicoes Travadas', open: 'Questoes em Aberto', rules: 'Regras Gerais' }
+
   return `# ${isEN ? 'Project Memory' : 'Memoria Projeto'}
 
 ${isEN ? '#moc #project #memory' : '#moc #projeto #memoria'}
@@ -120,44 +116,33 @@ ${isEN ? '#moc #project #memory' : '#moc #projeto #memoria'}
 > [!important] ${isEN ? 'Follow BEFORE writing any code' : 'Seguir ANTES de escrever qualquer codigo'}
 
 **${isEN ? 'To code:' : 'Para codar:'}**
-1. ${isEN ? '[[Entities]]' : '[[Entidades]]'} — ${isEN ? 'real fields exist?' : 'campos reais existem?'}
-2. ${isEN ? '[[Code Patterns]]' : '[[Padroes de Codigo]]'} — ${isEN ? 'how is it done here?' : 'como e feito aqui?'}
-3. ${isEN ? '[[Anti-patterns]]' : '[[Anti-patterns]]'} — ${isEN ? 'what not to do?' : 'o que nao fazer?'}
-4. ${isEN ? '[[Module Map]]' : '[[Mapa de Modulos]]'} — ${isEN ? 'already exists?' : 'ja existe?'}
-5. ${isEN ? '[[Test Strategy]]' : '[[Estrategia de Testes]]'} — ${isEN ? 'how to test?' : 'como testar?'}
+1. [[${links.entities}]] — ${isEN ? 'real fields exist?' : 'campos reais existem?'}
+2. [[${links.patterns}]] — ${isEN ? 'how is it done here?' : 'como e feito aqui?'}
+3. [[${links.anti}]] — ${isEN ? 'what not to do?' : 'o que nao fazer?'}
+4. [[${links.modules}]] — ${isEN ? 'already exists?' : 'ja existe?'}
+5. [[${links.tests}]] — ${isEN ? 'how to test?' : 'como testar?'}
 
 **${isEN ? 'To decide:' : 'Para decidir:'}**
-6. ${isEN ? '[[Locked Definitions]]' : '[[Definicoes Travadas]]'} — ${isEN ? 'already decided?' : 'ja foi decidido?'}
-7. ${isEN ? '[[Open Questions]]' : '[[Questoes em Aberto]]'} — ${isEN ? 'not decided yet?' : 'ainda nao foi decidido?'}
-8. ${isEN ? '[[General Rules]]' : '[[Regras Gerais]]'} — ${isEN ? 'what is the formula/logic?' : 'qual a formula/logica?'}
-`
-}
-
-function buildEmptyNote(title, tags, callout, lang) {
-  const isEN = lang === 'en'
-  return `# ${title}
-
-${tags}
-
-> [!abstract] ${callout}
-
-${isEN ? 'Back' : 'Voltar'}: [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]]
-
----
-
-_(${isEN ? 'fill in as the project evolves' : 'preencher conforme o projeto evolui'})_
+6. [[${links.locked}]] — ${isEN ? 'already decided?' : 'ja foi decidido?'}
+7. [[${links.open}]] — ${isEN ? 'not decided yet?' : 'ainda nao foi decidido?'}
+8. [[${links.rules}]] — ${isEN ? 'what is the formula/logic?' : 'qual a formula/logica?'}
 `
 }
 
 function buildLockedDefinitions(lang) {
   const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
   return `# ${isEN ? 'Locked Definitions' : 'Definicoes Travadas'}
 
 ${isEN ? '#decisions' : '#decisoes'}
 
 > [!abstract] ${isEN ? 'Confirmed rules — do not change without explicit review' : 'Regras confirmadas — nao alterar sem revisao explicita'}
 
-${isEN ? 'Back' : 'Voltar'}: [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]]
+> [!tip] ${isEN
+    ? '**Locked Definitions** = what was decided (choices that do not change)\n> **Business Rules** = how it works (formulas, logic, calculations)'
+    : '**Definicoes Travadas** = o que foi decidido (escolhas que nao mudam)\n> **Regras de Negocio** = como funciona (formulas, logica, calculos)'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 
 ---
 
@@ -168,13 +153,14 @@ ${isEN ? 'Back' : 'Voltar'}: [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]]
 
 function buildSessionsIndex(lang) {
   const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
   return `# ${isEN ? 'Sessions — Temporal Memory' : 'Sessoes — Memoria Temporal'}
 
 ${isEN ? '#sessions #moc' : '#sessoes #moc'}
 
 > [!abstract] ${isEN ? 'The chronological brain of the project' : 'O cerebro cronologico do projeto'}
 
-${isEN ? 'Back' : 'Voltar'}: [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]]
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 
 ---
 
@@ -182,6 +168,109 @@ ${isEN ? 'Back' : 'Voltar'}: [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]]
 
 | ${isEN ? 'Date' : 'Data'} | ${isEN ? 'Session' : 'Sessao'} | ${isEN ? 'Focus' : 'Foco'} |
 |------|--------|------|
+`
+}
+
+function buildEmptyNote(title, tags, callout, back, lang) {
+  const isEN = lang === 'en'
+  return `# ${title}
+
+${tags}
+
+> [!abstract] ${callout}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+_(${isEN ? 'fill in as the project evolves' : 'preencher conforme o projeto evolui'})_
+`
+}
+
+function buildManifesto(lang) {
+  const isEN = lang === 'en'
+  return `# ${isEN ? 'Manifesto' : 'Manifesto'}
+
+${isEN ? '#framework #philosophy' : '#framework #filosofia'}
+
+---
+
+## ${isEN ? 'The problem' : 'O problema'}
+
+${isEN
+    ? 'AI hallucinates because it lacks context. It invents fields that do not exist, ignores validated rules, duplicates logic, breaks patterns. The larger the project grows, the worse it gets — because AI forgets everything each conversation.'
+    : 'AI alucina porque nao tem contexto. Inventa campos que nao existem, ignora regras validadas, duplica logica, quebra padroes. Quanto mais o projeto cresce, pior fica — porque o AI esquece tudo a cada conversa.'}
+
+## ${isEN ? 'The solution' : 'A solucao'}
+
+${isEN
+    ? 'Structure project context so that AI (or any engineer) can produce precise, consistent code aligned with team decisions.'
+    : 'Estruturar o contexto do projeto de forma que o AI (ou qualquer engenheiro) consiga produzir codigo preciso, consistente e alinhado com as decisoes do time.'}
+
+## ${isEN ? 'Principles' : 'Principios'}
+
+1. **${isEN ? 'Vault > memory > code' : 'Vault > memoria > codigo'}** — ${isEN ? 'always consult the vault before implementing' : 'sempre consultar o vault antes de implementar'}
+2. **${isEN ? 'Mandatory tests' : 'Testes obrigatorios'}** — ${isEN ? 'code without tests does not exist' : 'codigo sem teste nao existe'}
+3. **${isEN ? 'Do not guess' : 'Nao adivinhar'}** — ${isEN ? 'if not decided, ask' : 'se nao esta decidido, perguntar'}
+4. **${isEN ? 'Do not duplicate' : 'Nao duplicar'}** — ${isEN ? 'if it already exists, reuse it' : 'se ja existe, reutilizar'}
+5. **${isEN ? 'Do not re-discuss' : 'Nao rediscutir'}** — ${isEN ? 'if locked, respect it' : 'se esta travado, respeitar'}
+`
+}
+
+function buildHealthCheck(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  return `# ${isEN ? 'Health Check' : 'Health Check'}
+
+${isEN ? '#framework #health' : '#framework #saude'}
+
+> [!abstract] ${isEN ? 'Is the vault healthy?' : 'O vault esta saudavel?'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+| ${isEN ? 'Question' : 'Pergunta'} | ${isEN ? 'Note' : 'Nota'} |
+|----------|------|
+| ${isEN ? 'AI knows what the project does?' : 'AI sabe o que o projeto faz?'} | [[${isEN ? 'Project Memory' : 'Memoria Projeto'}]] |
+| ${isEN ? 'AI speaks the right language?' : 'AI fala a lingua certa?'} | [[${isEN ? 'Domain Glossary' : 'Glossario de Dominio'}]] |
+| ${isEN ? 'AI knows the database fields?' : 'AI sabe os campos do banco?'} | [[${isEN ? 'Entities' : 'Entidades'}]] |
+| ${isEN ? 'AI knows the code pattern?' : 'AI sabe o padrao de codigo?'} | [[${isEN ? 'Code Patterns' : 'Padroes de Codigo'}]] |
+| ${isEN ? 'AI knows what NOT to do?' : 'AI sabe o que NAO fazer?'} | [[Anti-patterns]] |
+| ${isEN ? 'AI knows the rules?' : 'AI sabe as regras?'} | [[${isEN ? 'General Rules' : 'Regras Gerais'}]] |
+| ${isEN ? 'AI knows what was decided?' : 'AI sabe o que ja decidiu?'} | [[${isEN ? 'Locked Definitions' : 'Definicoes Travadas'}]] |
+| ${isEN ? 'AI knows what is pending?' : 'AI sabe o que falta decidir?'} | [[${isEN ? 'Open Questions' : 'Questoes em Aberto'}]] |
+| ${isEN ? 'AI knows where each module lives?' : 'AI sabe onde mora cada modulo?'} | [[${isEN ? 'Module Map' : 'Mapa de Modulos'}]] |
+| ${isEN ? 'AI knows how to test?' : 'AI sabe como testar?'} | [[${isEN ? 'Test Strategy' : 'Estrategia de Testes'}]] |
+`
+}
+
+function buildChangelog(lang) {
+  const isEN = lang === 'en'
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
+  return `# Changelog
+
+${isEN ? '#changelog' : '#changelog'}
+
+> [!abstract] ${isEN ? 'Release history and milestones' : 'Historico de versoes e marcos'}
+
+${isEN ? 'Back' : 'Voltar'}: [[${back}]]
+
+---
+
+## [Unreleased]
+
+### ${isEN ? 'Added' : 'Adicionado'}
+-
+
+### ${isEN ? 'Changed' : 'Alterado'}
+-
+
+---
+
+## [v0.1.0] — ${new Date().toISOString().split('T')[0]}
+
+- ${isEN ? 'Project initialized with Cortex' : 'Projeto inicializado com Cortex'}
 `
 }
 
@@ -196,80 +285,96 @@ function buildSpec(vars) {
     .replace(/\{\{LANG\}\}/g, vars.LANG)
 }
 
+// --- Main ---
+
 export function createVault(vars) {
-  const { NAME, LANG, MODE } = vars
+  const { LANG, MODE } = vars
   const vaultPath = join(process.cwd(), '.cortex')
   const isEN = LANG === 'en'
   const isLivre = MODE === 'Livre' || MODE === 'Free'
-  const structure = isEN
-    ? (isLivre ? EN_STRUCTURE.livre : EN_STRUCTURE.projeto)
-    : (isLivre ? PT_STRUCTURE.livre : PT_STRUCTURE.projeto)
+  const dirs = DIRS[isEN ? 'en' : 'pt'][isLivre ? 'livre' : 'projeto']
+  const back = isEN ? 'Project Memory' : 'Memoria Projeto'
 
-  // Criar diretorio raiz
+  // Criar diretório raiz + subdiretórios
   mkdirSync(vaultPath, { recursive: true })
-
-  // Criar .gitignore do vault
-  writeFileSync(join(vaultPath, '.gitignore'), '# Obsidian\n.obsidian/\n.trash/\n')
-
-  // Criar .spec.md (blueprint interno)
-  writeFileSync(join(vaultPath, '.spec.md'), buildSpec(vars))
-
-  // Criar diretorios
-  for (const dir of Object.keys(structure.dirs)) {
+  for (const dir of dirs) {
     mkdirSync(join(vaultPath, dir), { recursive: true })
   }
 
-  // Criar nota principal com vars substituidas
-  const rootNote = isEN ? 'Project Memory.md' : (isLivre ? 'Projeto.md' : 'Memoria Projeto.md')
-  writeFileSync(join(vaultPath, rootNote), buildProjectMemory(vars, LANG))
+  // Arquivos base (ambos os modos)
+  writeFileSync(join(vaultPath, '.gitignore'), '# Obsidian\n.obsidian/\n.trash/\n')
+  writeFileSync(join(vaultPath, '.spec.md'), buildSpec(vars))
 
-  // Criar notas de sessoes
-  if (!isLivre) {
-    const sessionsDir = isEN ? 'Sessions' : 'Sessoes'
-    const sessionsIndex = isEN ? 'Sessions - Temporal Memory.md' : 'Sessoes - Memoria Temporal.md'
-    writeFileSync(join(vaultPath, sessionsDir, sessionsIndex), buildSessionsIndex(LANG))
-
-    // Decisoes
-    const decisoesDir = isEN ? 'Decisions' : 'Decisoes'
-    const lockedFile = isEN ? 'Locked Definitions.md' : 'Definicoes Travadas.md'
-    writeFileSync(join(vaultPath, decisoesDir, lockedFile), buildLockedDefinitions(LANG))
-
-    // Demais notas vazias (estrutura minima)
-    const emptyNotes = isEN ? [
-      { dir: 'Decisions', file: 'Open Questions.md', title: 'Open Questions', tags: '#decisions', callout: 'Items requiring definition before implementing' },
-      { dir: 'Decisions', file: 'Anti-patterns.md', title: 'Anti-patterns', tags: '#decisions', callout: 'What NEVER to do in this project' },
-      { dir: 'Domain', file: 'Domain Glossary.md', title: 'Domain Glossary', tags: '#domain', callout: 'Business terms' },
-      { dir: 'Domain', file: 'Entities.md', title: 'Entities', tags: '#domain #schema', callout: 'Real database fields — check before coding' },
-      { dir: 'Architecture', file: 'Code Patterns.md', title: 'Code Patterns', tags: '#architecture', callout: 'Real examples — copy, do not invent' },
-      { dir: 'Architecture', file: 'Module Map.md', title: 'Module Map', tags: '#architecture', callout: 'Who does what — module dependencies' },
-      { dir: 'Architecture', file: 'Test Strategy.md', title: 'Test Strategy', tags: '#architecture', callout: 'How to test in this project — tests are mandatory' },
-      { dir: 'Architecture', file: 'API Contracts.md', title: 'API Contracts', tags: '#architecture', callout: 'Endpoints exposed by the system' },
-      { dir: 'Architecture', file: 'Architecture Decisions.md', title: 'Architecture Decisions', tags: '#architecture #adr', callout: 'ADRs — Architecture Decision Records' },
-      { dir: 'Architecture', file: 'Integrations.md', title: 'Integrations', tags: '#architecture', callout: 'External services consumed by the system' },
-      { dir: 'Architecture', file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#architecture', callout: 'Clean Architecture principles applied to the project' },
-      { dir: 'Business Rules', file: 'General Rules.md', title: 'General Rules', tags: '#rules', callout: 'Validated rules that govern the system' },
-    ] : [
-      { dir: 'Decisoes', file: 'Questoes em Aberto.md', title: 'Questoes em Aberto', tags: '#decisoes', callout: 'Itens que precisam de definicao antes de implementar' },
-      { dir: 'Decisoes', file: 'Anti-patterns.md', title: 'Anti-patterns', tags: '#decisoes', callout: 'O que NUNCA fazer neste projeto' },
-      { dir: 'Dominio', file: 'Glossario de Dominio.md', title: 'Glossario de Dominio', tags: '#dominio', callout: 'Termos do negocio' },
-      { dir: 'Dominio', file: 'Entidades.md', title: 'Entidades', tags: '#dominio #schema', callout: 'Campos reais do banco — consultar antes de codar' },
-      { dir: 'Arquitetura', file: 'Padroes de Codigo.md', title: 'Padroes de Codigo', tags: '#arquitetura', callout: 'Exemplos reais — copiar, nao inventar' },
-      { dir: 'Arquitetura', file: 'Mapa de Modulos.md', title: 'Mapa de Modulos', tags: '#arquitetura', callout: 'Quem faz o que — dependencias entre modulos' },
-      { dir: 'Arquitetura', file: 'Estrategia de Testes.md', title: 'Estrategia de Testes', tags: '#arquitetura', callout: 'Como testar neste projeto — testes obrigatorios' },
-      { dir: 'Arquitetura', file: 'Contratos API.md', title: 'Contratos API', tags: '#arquitetura', callout: 'Endpoints que o sistema expoe' },
-      { dir: 'Arquitetura', file: 'Decisoes de Arquitetura.md', title: 'Decisoes de Arquitetura', tags: '#arquitetura #adr', callout: 'ADRs — Architectural Decision Records' },
-      { dir: 'Arquitetura', file: 'Integracoes.md', title: 'Integracoes', tags: '#arquitetura', callout: 'Servicos externos consumidos pelo sistema' },
-      { dir: 'Arquitetura', file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#arquitetura', callout: 'Principios de Clean Architecture aplicados ao projeto' },
-      { dir: 'Regras de Negocio', file: 'Regras Gerais.md', title: 'Regras Gerais', tags: '#regras', callout: 'Regras validadas que governam o sistema' },
-    ]
-
-    for (const note of emptyNotes) {
-      writeFileSync(
-        join(vaultPath, note.dir, note.file),
-        buildEmptyNote(note.title, note.tags, note.callout, LANG)
-      )
-    }
+  // --- Modo Livre ---
+  if (isLivre) {
+    const rootFile = isEN ? 'Project.md' : 'Projeto.md'
+    writeFileSync(join(vaultPath, rootFile), buildLivreRoot(vars, LANG))
+    console.log('  ✓ Vault criado em .cortex/')
+    return
   }
 
-  console.log(`  ✓ Vault criado em ./cortex/`)
+  // --- Modo Projeto ---
+
+  // Nota raiz
+  writeFileSync(join(vaultPath, isEN ? 'Project Memory.md' : 'Memoria Projeto.md'), buildProjectMemory(vars, LANG))
+
+  // Notas raiz extras
+  writeFileSync(join(vaultPath, 'MANIFESTO.md'), buildManifesto(LANG))
+  writeFileSync(join(vaultPath, 'Health Check.md'), buildHealthCheck(LANG))
+  writeFileSync(join(vaultPath, 'Changelog.md'), buildChangelog(LANG))
+  writeFileSync(join(vaultPath, isEN ? 'Technical FAQ.md' : 'FAQ Tecnico.md'),
+    buildEmptyNote(isEN ? 'Technical FAQ' : 'FAQ Tecnico', isEN ? '#faq' : '#faq', isEN ? 'Frequently asked questions' : 'Perguntas frequentes', back, LANG))
+  writeFileSync(join(vaultPath, 'Getting Started.md'),
+    buildEmptyNote('Getting Started', '#framework #onboarding', isEN ? '3 modes, 1 principle: nothing is lost' : '3 modos, 1 principio: nada se perde', back, LANG))
+
+  // Sessoes
+  const sessDir = isEN ? 'Sessions' : 'Sessoes'
+  const sessIndex = isEN ? 'Sessions - Temporal Memory.md' : 'Sessoes - Memoria Temporal.md'
+  writeFileSync(join(vaultPath, sessDir, sessIndex), buildSessionsIndex(LANG))
+
+  // Decisoes
+  const decDir = isEN ? 'Decisions' : 'Decisoes'
+  writeFileSync(join(vaultPath, decDir, isEN ? 'Locked Definitions.md' : 'Definicoes Travadas.md'), buildLockedDefinitions(LANG))
+  writeFileSync(join(vaultPath, decDir, isEN ? 'Open Questions.md' : 'Questoes em Aberto.md'),
+    buildEmptyNote(isEN ? 'Open Questions' : 'Questoes em Aberto', isEN ? '#decisions' : '#decisoes', isEN ? 'Items requiring definition before implementing' : 'Itens que precisam de definicao antes de implementar', back, LANG))
+  writeFileSync(join(vaultPath, decDir, 'Anti-patterns.md'),
+    buildEmptyNote('Anti-patterns', isEN ? '#decisions' : '#decisoes', isEN ? 'What NEVER to do in this project' : 'O que NUNCA fazer neste projeto', back, LANG))
+
+  // Dominio
+  const domDir = isEN ? 'Domain' : 'Dominio'
+  writeFileSync(join(vaultPath, domDir, isEN ? 'Domain Glossary.md' : 'Glossario de Dominio.md'),
+    buildEmptyNote(isEN ? 'Domain Glossary' : 'Glossario de Dominio', isEN ? '#domain' : '#dominio', isEN ? 'Business terms' : 'Termos do negocio', back, LANG))
+  writeFileSync(join(vaultPath, domDir, isEN ? 'Entities.md' : 'Entidades.md'),
+    buildEmptyNote(isEN ? 'Entities' : 'Entidades', isEN ? '#domain #schema' : '#dominio #schema', isEN ? 'Real database fields — check before coding' : 'Campos reais do banco — consultar antes de codar', back, LANG))
+
+  // Arquitetura
+  const archDir = isEN ? 'Architecture' : 'Arquitetura'
+  const archNotes = isEN ? [
+    { file: 'Code Patterns.md', title: 'Code Patterns', tags: '#architecture', callout: 'Real examples — copy, do not invent' },
+    { file: 'Module Map.md', title: 'Module Map', tags: '#architecture', callout: 'Who does what — module dependencies' },
+    { file: 'Test Strategy.md', title: 'Test Strategy', tags: '#architecture', callout: 'How to test in this project — tests are mandatory' },
+    { file: 'API Contracts.md', title: 'API Contracts', tags: '#architecture', callout: 'Endpoints exposed by the system (back → front)' },
+    { file: 'Architecture Decisions.md', title: 'Architecture Decisions', tags: '#architecture #adr', callout: 'ADRs — Architecture Decision Records' },
+    { file: 'Integrations.md', title: 'Integrations', tags: '#architecture', callout: 'External services consumed by the system' },
+    { file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#architecture', callout: 'Clean Architecture principles applied to the project' },
+  ] : [
+    { file: 'Padroes de Codigo.md', title: 'Padroes de Codigo', tags: '#arquitetura', callout: 'Exemplos reais — copiar, nao inventar' },
+    { file: 'Mapa de Modulos.md', title: 'Mapa de Modulos', tags: '#arquitetura', callout: 'Quem faz o que — dependencias entre modulos' },
+    { file: 'Estrategia de Testes.md', title: 'Estrategia de Testes', tags: '#arquitetura', callout: 'Como testar neste projeto — testes obrigatorios' },
+    { file: 'Contratos API.md', title: 'Contratos API', tags: '#arquitetura', callout: 'Endpoints que o sistema expoe (back → front)' },
+    { file: 'Decisoes de Arquitetura.md', title: 'Decisoes de Arquitetura', tags: '#arquitetura #adr', callout: 'ADRs — Architectural Decision Records' },
+    { file: 'Integracoes.md', title: 'Integracoes', tags: '#arquitetura', callout: 'Servicos externos consumidos pelo sistema' },
+    { file: 'Clean Architecture.md', title: 'Clean Architecture', tags: '#arquitetura', callout: 'Principios de Clean Architecture aplicados ao projeto' },
+  ]
+
+  for (const note of archNotes) {
+    writeFileSync(join(vaultPath, archDir, note.file), buildEmptyNote(note.title, note.tags, note.callout, back, LANG))
+  }
+
+  // Regras de negocio
+  const rulesDir = isEN ? 'Business Rules' : 'Regras de Negocio'
+  writeFileSync(join(vaultPath, rulesDir, isEN ? 'General Rules.md' : 'Regras Gerais.md'),
+    buildEmptyNote(isEN ? 'General Rules' : 'Regras Gerais', isEN ? '#rules' : '#regras', isEN ? 'Validated rules that govern the system' : 'Regras validadas que governam o sistema', back, LANG))
+
+  console.log('  ✓ Vault criado em .cortex/')
 }
