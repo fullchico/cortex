@@ -20,11 +20,16 @@ Um vault Obsidian com notas interligadas: entidades, regras, decisoes, padroes, 
 
 ```bash
 # 1. Clone
-git clone https://github.com/seu-usuario/cortex.git
+git clone https://github.com/fullchico/cortex.git
 cd cortex
 
 # 2. Instale (pergunta qual agent voce usa)
+
+# Mac / Linux
 chmod +x install.sh && ./install.sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
 O instalador pergunta qual agent voce usa:

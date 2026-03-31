@@ -6,7 +6,7 @@
 
 ## O problema
 
-AI hallucina porque nao tem contexto. Inventa campos que nao existem, ignora regras validadas, duplica logica, quebra padroes. Quanto mais o projeto cresce, pior fica — porque o AI esquece tudo a cada conversa.
+AI alucina porque nao tem contexto. Inventa campos que nao existem, ignora regras validadas, duplica logica, quebra padroes. Quanto mais o projeto cresce, pior fica — porque o AI esquece tudo a cada conversa.
 
 O resultado: codigo que compila mas nao faz sentido. Retrabalho. Decisoes rediscutidas. Tempo perdido.
 
