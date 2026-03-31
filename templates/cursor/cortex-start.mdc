@@ -1,0 +1,48 @@
+---
+description: Use when the user says "cortex start", "iniciar sessao", "abrir sessao", "start session". Opens today's session by reading vault context and resuming pending work.
+globs:
+alwaysApply: false
+---
+
+# Cortex Start — Abrir sessao
+
+## Fluxo
+
+1. Detectar vault em `./cortex/`
+2. Detectar idioma:
+   - `./cortex/Memoria Projeto.md` → PT
+   - `./cortex/Project Memory.md` → EN
+
+3. Ler contexto:
+   - `./cortex/Memoria Projeto.md` (ou `Project Memory.md`) — visao geral
+   - Listar `./cortex/Sessoes/timeline/` e ler os 3 arquivos mais recentes
+   - `./cortex/Decisoes/Definicoes Travadas.md` — regras imutaveis
+
+4. Se contexto declarado (ex: "cortex start auth"):
+   - Ler `./cortex/Sessoes/contextos/auth.md`
+   - Ler header `depends:` e carregar cada contexto listado
+   - Ler ultimas 3 entradas da timeline
+
+5. Se sem contexto: perguntar "no que vai trabalhar hoje?"
+
+6. Resumir ao usuario:
+
+```
+Sessao aberta — <PROJETO> (<DATA>)
+
+Contexto: <nome> [depends: ...]
+
+Decisoes recentes:
+- ...
+
+Pendencias:
+- [ ] ...
+
+O que vamos fazer?
+```
+
+## Regras
+
+- Carregar apenas o contexto declarado + dependencias — nao ler vault inteiro
+- Uma nota de timeline por dia — nao criar segunda
+- Herdar pendencias da ultima sessao

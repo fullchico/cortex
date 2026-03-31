@@ -1,230 +1,169 @@
 # Cortex
 
-**AI Alucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
+**AI alucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
 
-Cortex e um framework que estrutura o contexto do seu projeto em um vault Obsidian. O AI consulta antes de codar — e produz codigo preciso.
-
-## Como funciona
-
-Um vault Obsidian com notas interligadas: entidades, regras, decisoes, padroes, testes. O AI le antes de codar. Voce e o AI trabalham juntos — cada conversa alimenta o vault, cada decisao fica registrada, nada se perde.
-
-## 3 modos
-
-| Modo | Quando | O que acontece |
-|------|--------|---------------|
-| **Construir** | Ideia nova, sem codigo | AI debate junto. Cada conversa alimenta o vault. |
-| **Decidir** | Tem spec/PRD/docs | AI importa pro vault. Cada decisao fica travada. |
-| **Explorar** | Projeto existente sem docs | Cada task e documentada. Nada se perde. |
+Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta antes de codar — e produz codigo preciso.
 
 ## Instalacao
 
-```bash
-git clone https://github.com/fullchico/cortex.git
-cd cortex
-```
-
-Escolha seu agent e siga o guia:
-
-| Agent | Guia | O que copiar |
-|-------|------|-------------|
-| **Claude Code** | [Setup Claude Code](#claude-code) | `skill/cortex/` → `~/.claude/skills/` |
-| **Cursor** | [Setup Cursor](#cursor) | `rules/*.mdc` → `.cursor/rules/` |
-| **Copilot** | [Setup Copilot](#github-copilot) | `copilot-instructions.md` → `.github/` |
-
----
-
-### Claude Code
+Na raiz do seu projeto:
 
 ```bash
-# Copiar skill
-cp -r skill/cortex ~/.claude/skills/cortex
-
-# Copiar template para ~/.cortex/
-mkdir -p ~/.cortex
-cp -r vault-template ~/.cortex/vault-template
-
-# No Claude Code:
-/cortex init
-# → cria ~/.cortex/vaults/<nome-projeto>/ com toda estrutura
-# → abra no Obsidian como vault
+npx cortex-ai
 ```
 
-Detalhes: o skill `/cortex` tem 3 comandos:
+O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
 
-| Comando | O que faz |
-|---------|-----------|
-| `/cortex init` | Cria vault. Pergunta nome, stack e modo (Construir/Decidir/Explorar). |
-| `/cortex start` | Abre sessao do dia. Le vault e resume contexto. |
-| `/cortex end` | Fecha sessao. Salva decisoes e artefatos no vault. |
+```
+? Qual AI tool voce usa?          Claude Code / Cursor / Copilot / Todos
+? Nome do projeto:                my-app
+? Descricao (1 frase):            Sistema de gestao de tarefas
+? Stack:                          Node.js + React + PostgreSQL
+? Modo:                           Projeto / Livre
+? Idioma:                         PT / EN
+? Tem spec ou PRD para importar?  S/N
+
+  ✓ Criou CLAUDE.md
+  ✓ Criou .cursor/rules/cortex-*.mdc
+  ✓ Criou .github/copilot-instructions.md
+  ✓ Vault criado em ./cortex/
+  ✓ Adicionou cortex/ ao .gitignore
+
+  Abra ./cortex/ no Obsidian como vault
+  Diga "cortex start" para comecar
+```
+
+## Requisitos
+
+- Node.js 18+
+- Obsidian
+- Um de: Claude Code, Cursor ou Copilot
 
 ---
 
-### Cursor
+## 2 modos
 
-```bash
-# Copiar rules para o projeto (ou global)
-mkdir -p /path/do/projeto/.cursor/rules
-cp cursor-setup/rules/*.mdc /path/do/projeto/.cursor/rules/
+### Projeto — vault completo
 
-# Copiar template para ~/.cortex/
-mkdir -p ~/.cortex
-cp -r vault-template ~/.cortex/vault-template
+Para qualquer projeto que precisa de estrutura. Vault com decisoes, arquitetura, entidades, regras de negocio.
 
-# No Cursor, digitar no chat:
-# "cortex init"
-# → cria ~/.cortex/vaults/<nome-projeto>/ com toda estrutura
-# → abra no Obsidian como vault
+Durante o init:
+```
+"Tem spec, PRD ou docs para importar?"
+→ Sim → diga "cortex start" e cole o doc. A IA distribui pelo vault.
+→ Nao → comeca vazio. A IA debate junto e o vault cresce a cada sessao.
 ```
 
-4 rules instalados:
-- `cortex-protocol.mdc` — **sempre ativo**, consulta vault antes de codar
-- `cortex-init.mdc` — "cortex init" → cria vault a partir do template
-- `cortex-start.mdc` — "cortex start" → abre sessao
-- `cortex-end.mdc` — "cortex end" → fecha sessao
+### Livre — vault minimo
 
-> O repo `cortex` e um instalador — copia rules + template e descarta.
+Para devs no dia a dia. Zero configuracao. So timeline e contextos.
 
-Ver `cursor-setup/SETUP-CURSOR.md` para detalhes.
+```
+cortex/
+├── Projeto.md
+└── Sessoes/
+    ├── timeline/
+    └── contextos/
+```
+
+Contextos surgem organicamente — a IA sugere no final de cada sessao.
 
 ---
-
-### GitHub Copilot
-
-```bash
-# Copiar instrucoes para o projeto
-mkdir -p /path/do/projeto/.github
-cp copilot-setup/.github/copilot-instructions.md /path/do/projeto/.github/
-
-# Copiar template para ~/.cortex/
-mkdir -p ~/.cortex
-cp -r vault-template ~/.cortex/vault-template
-
-# Editar copilot-instructions.md → preencher path: ~/.cortex/vaults/<nome>/
-```
-
-> Copilot le melhor arquivos dentro do workspace. Se preferir, copie o vault para dentro do projeto.
-> Senao, use path absoluto para `~/.cortex/vaults/<nome>/`.
-
-Ver `copilot-setup/SETUP-COPILOT.md` para detalhes.
-
----
-
-### Outros agents
-
-Os arquivos sao markdown padrao. Adapte para seu agent:
-- **Windsurf** → copiar protocolo para `.windsurfrules`
-- **Cline** → copiar para `.clinerules`
-- **Outro** → adicionar como instrucao do agente
-
----
-
-## Estrutura global (apos instalacao)
-
-```
-~/.cortex/
-├── vault-template/              ← template base (copiado na instalacao)
-└── vaults/
-    ├── meu-app/                 ← criado por "cortex init"
-    ├── outro-projeto/           ← criado por "cortex init"
-    └── ...
-```
-
-## Estrutura de cada vault
-
-```
-~/.cortex/vaults/meu-projeto/
-├── Memoria Projeto.md                ← AI le primeiro
-├── MANIFESTO.md                      ← filosofia
-├── Getting Started.md                ← 3 modos de uso
-├── Health Check.md                   ← vault saudavel?
-├── FAQ Tecnico.md                    ← perguntas recorrentes
-├── Changelog.md                      ← marcos de release
-│
-├── Decisoes/
-│   ├── Definicoes Travadas.md        ← imutaveis
-│   ├── Questoes em Aberto.md         ← falta decidir
-│   └── Anti-patterns.md             ← NUNCA fazer
-│
-├── Dominio/
-│   ├── Glossario de Dominio.md       ← termos
-│   └── Entidades.md                 ← campos reais do banco
-│
-├── Arquitetura/
-│   ├── Clean Architecture.md        ← camadas, DIP, SOLID
-│   ├── Estrategia de Testes.md      ← piramide, convencoes
-│   ├── Padroes de Codigo.md         ← exemplos reais
-│   ├── Mapa de Modulos.md           ← quem faz o que
-│   ├── Decisoes de Arquitetura.md   ← ADRs
-│   ├── Contratos API.md            ← back→front
-│   └── Integracoes.md              ← servicos externos
-│
-├── Pipeline/                         ← fluxo principal
-├── Regras de Negocio/                ← formulas, logica
-├── Sessoes/                          ← 1 nota por dia
-├── Fontes de Dados/                  ← origens
-├── Personas/                         ← usuarios
-├── Referencias/                      ← docs, links, artigos
-└── Templates/                        ← modelo de sessao
-```
-
-## Protocolo do AI
-
-Antes de codar, o AI consulta:
-
-```
-1. Entidades        → campos existem?
-2. Padroes          → como faz aqui?
-3. Anti-patterns    → o que nao fazer?
-4. Mapa de Modulos  → ja existe?
-5. Testes           → como testar?
-6. Def. Travadas    → ja decidido?
-7. Regras           → qual a formula?
-```
 
 ## Fluxo diario
 
 ```
-# Claude Code
-/cortex start       → AI le vault, resume contexto
-  trabalhar...      → AI consulta vault antes de codar
-/cortex end         → salva decisoes e artefatos
-
-# Cursor / Copilot
-"Leia o vault e resuma o contexto"
-  trabalhar...      → AI consulta vault via .cursorrules / copilot-instructions
-"Salva a sessao de hoje no vault"
+cortex start auth     → IA carrega contexto auth + dependencias + timeline recente
+  trabalhar...        → IA consulta vault antes de codar
+cortex end            → salva decisoes, atualiza contexto, sugere novo contexto se necessario
 ```
+
+---
+
+## Contextos
+
+Contextos sao ilhas de conhecimento por area do projeto (auth, dashboard, payments).
+
+```markdown
+# auth
+
+depends: [users, sessions]
+
+## Decisoes
+| Decisao | Definicao | Data |
+...
+
+## Padroes
+...
+
+## Sessoes
+- [[timeline/2026-03-31]] — implementei login
+```
+
+A IA carrega `auth` + tudo que esta em `depends:` automaticamente.
+
+Criar contexto:
+```
+cortex context payments
+```
+
+---
+
+## Comandos
+
+| Comando | O que faz |
+|---------|-----------|
+| `cortex start` | Abre sessao. Pergunta no que vai trabalhar. |
+| `cortex start auth` | Abre sessao carregando o contexto `auth`. |
+| `cortex end` | Fecha sessao. Salva timeline e contexto. |
+| `cortex context <nome>` | Cria novo contexto. |
+
+---
+
+## O que fica no projeto
+
+```
+my-project/
+├── CLAUDE.md                       ← Claude Code (commitado)
+├── .cursor/rules/                  ← Cursor (commitado)
+│   ├── cortex-protocol.mdc
+│   ├── cortex-start.mdc
+│   └── cortex-end.mdc
+├── .github/
+│   └── copilot-instructions.md     ← Copilot (commitado)
+├── cortex/                         ← vault (gitignored)
+│   ├── .spec.md                    ← blueprint customizavel
+│   ├── Memoria Projeto.md
+│   └── Sessoes/
+│       ├── timeline/
+│       └── contextos/
+└── .gitignore                      ← cortex/ ignorado
+```
+
+**Commitado:** `CLAUDE.md`, `.cursor/rules/`, `.github/` — todo dev do time tem o mesmo comportamento de IA.
+
+**Gitignored:** `./cortex/` — memoria pessoal, contexto sensivel.
+
+---
+
+## Customizar o vault
+
+O blueprint do vault esta em `./cortex/.spec.md`. Edite para:
+
+- Adicionar notas especificas do projeto
+- Remover notas que nao usa
+- Mudar labels das secoes
+
+---
 
 ## Filosofia
 
-1. **Codigo que sobrevive sem AI** — Clean Arch + testes obrigatorios
-2. **Contexto estruturado > memoria** — vault e fonte da verdade
-3. **Decisoes imutaveis** — o que foi validado nao se rediscute
+1. **Vault > memoria > codigo** — sempre consultar o vault antes de implementar
+2. **Contexto focado** — carregar so o que e necessario para a task
+3. **Ilhas de conhecimento** — cada contexto acumula o que o projeto sabe sobre aquela area
+4. **Nada se perde** — cada sessao alimenta o vault
 
-## Estrutura do repo
-
-```
-cortex/
-├── README.md                         ← voce esta aqui
-├── .gitignore
-├── skill/
-│   └── cortex/
-│       └── SKILL.md                  ← skill Claude Code (/cortex)
-├── cursor-setup/
-│   ├── rules/
-│   │   ├── cortex-protocol.mdc      ← sempre ativo (consulta vault)
-│   │   ├── cortex-init.mdc          ← "cortex init"
-│   │   ├── cortex-start.mdc         ← "cortex start"
-│   │   └── cortex-end.mdc           ← "cortex end"
-│   ├── .cursorrules                  ← alternativa simples (sem rules)
-│   ├── .cursorignore
-│   └── SETUP-CURSOR.md              ← guia
-├── copilot-setup/
-│   ├── .github/
-│   │   └── copilot-instructions.md  ← protocolo para Copilot
-│   └── SETUP-COPILOT.md             ← guia
-└── vault-template/                   ← template do vault (27 notas)
-```
+---
 
 ## Licenca
 

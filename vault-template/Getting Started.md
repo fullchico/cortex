@@ -180,9 +180,9 @@ Nao precisa marcar todos. So os que se aplicam.
 ## Diario
 
 ```
-/iniciar-sessao VAULT  → AI le contexto, retoma
-  trabalhar...         → AI consulta vault antes de codar
-/fechar-sessao VAULT   → registra o que aconteceu
+/cortex start  → AI le contexto, retoma
+  trabalhar... → AI consulta vault antes de codar
+/cortex end    → registra o que aconteceu
 ```
 
 ## Semanal

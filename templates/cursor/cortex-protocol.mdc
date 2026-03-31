@@ -1,0 +1,53 @@
+---
+description: Cortex protocol — always consult the vault before writing code, making decisions, or integrating systems. Apply when working on any project that has a ./cortex/ vault.
+globs:
+alwaysApply: true
+---
+
+# Cortex Protocol
+
+## Vault path
+
+O vault esta em `./cortex/` na raiz do projeto (criado por `npx cortex-ai`).
+
+Detectar idioma:
+- `./cortex/Memoria Projeto.md` existe → PT
+- `./cortex/Project Memory.md` existe → EN
+
+Se vault nao existe: sugerir `npx cortex-ai`.
+
+## Antes de codar (OBRIGATORIO)
+
+1. Ler `./cortex/Dominio/Entidades.md` — campos reais. NAO inventar.
+2. Ler `./cortex/Arquitetura/Padroes de Codigo.md` — copiar padroes. NAO improvisar.
+3. Ler `./cortex/Decisoes/Anti-patterns.md` — o que NUNCA fazer.
+4. Ler `./cortex/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
+5. Ler `./cortex/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
+
+## Antes de decidir
+
+6. Ler `./cortex/Decisoes/Definicoes Travadas.md` — NAO rediscutir.
+7. Ler `./cortex/Decisoes/Questoes em Aberto.md` — nao decidido? PERGUNTAR.
+8. Ler `./cortex/Regras de Negocio/Regras Gerais.md` — formulas reais. NAO adivinhar.
+
+## Antes de integrar
+
+9. Ler `./cortex/Arquitetura/Contratos API.md` — shape real.
+10. Ler `./cortex/Dominio/Glossario de Dominio.md` — termos corretos.
+
+## Regras
+
+- Vault = fonte da verdade (vault > memoria > codigo)
+- NAO adivinhar — perguntar se nao esta no vault
+- NAO rediscutir — respeitar Definicoes Travadas
+- NAO duplicar — reutilizar o que existe
+
+## Pos-task
+
+Sugerir registrar no vault:
+- Termo novo → `./cortex/Dominio/Glossario de Dominio.md`
+- Campo/entidade → `./cortex/Dominio/Entidades.md`
+- Padrao → `./cortex/Arquitetura/Padroes de Codigo.md`
+- Anti-pattern → `./cortex/Decisoes/Anti-patterns.md`
+- Decisao → `./cortex/Decisoes/Definicoes Travadas.md`
+- Duvida → `./cortex/Decisoes/Questoes em Aberto.md`
