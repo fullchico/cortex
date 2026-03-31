@@ -174,7 +174,7 @@ const name = await input({
 })
 
 const description = await input({
-  message: 'Descricao em 1 frase:',
+  message: 'Descreva brevemente o projeto:',
   default: prefill.description || undefined,
   validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
 })
