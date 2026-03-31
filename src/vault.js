@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, renameSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, cpSync, rmSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -756,13 +756,24 @@ export function migrateVault(vars) {
 
 export function archiveVault(date) {
   const vaultPath = join(process.cwd(), '.cortex')
-  const archiveDir = join(vaultPath, 'Anterior', date)
+
+  // Evita conflito se ja existe arquivo do mesmo dia
+  const anteriorBase = join(vaultPath, 'Anterior')
+  let archiveName = date
+  if (existsSync(join(anteriorBase, date))) {
+    archiveName = `${date}-${Date.now()}`
+  }
+
+  const archiveDir = join(anteriorBase, archiveName)
   mkdirSync(archiveDir, { recursive: true })
 
   for (const entry of readdirSync(vaultPath, { withFileTypes: true })) {
     if (entry.name.startsWith('.') || entry.name === 'Anterior') continue
-    renameSync(join(vaultPath, entry.name), join(archiveDir, entry.name))
+    const src = join(vaultPath, entry.name)
+    const dest = join(archiveDir, entry.name)
+    cpSync(src, dest, { recursive: true })
+    rmSync(src, { recursive: true, force: true })
   }
 
-  console.log(`  ✓ Vault anterior arquivado em .cortex/Anterior/${date}/`)
+  console.log(`  ✓ Vault anterior arquivado em .cortex/Anterior/${archiveName}/`)
 }
