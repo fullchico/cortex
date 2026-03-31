@@ -35,8 +35,20 @@ if (vaultExists()) {
 
     console.log()
 
-    // Ler info existente do vault como defaults
+    // Idioma primeiro
     const existingLang = detectVaultLang()
+    const migLang = await select({
+      message: 'Idioma do vault:',
+      default: existingLang,
+      choices: [
+        { name: 'PT  —  Portugues', value: 'pt' },
+        { name: 'EN  —  English',   value: 'en' },
+      ],
+    })
+
+    console.log()
+
+    // Ler info existente do vault como defaults
     const existing = readFreestyledRoot(existingLang)
 
     const migName = await input({
@@ -54,15 +66,6 @@ if (vaultExists()) {
     const migStack = await input({
       message: 'Stack principal:',
       default: existing.stack || 'ainda nao sei',
-    })
-
-    const migLang = await select({
-      message: 'Idioma do vault:',
-      default: existingLang,
-      choices: [
-        { name: 'PT  —  Portugues', value: 'pt' },
-        { name: 'EN  —  English',   value: 'en' },
-      ],
     })
 
     const migVars = {
