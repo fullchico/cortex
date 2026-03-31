@@ -167,6 +167,16 @@ if (!isReinit) {
   }
 }
 
+// ── Idioma ────────────────────────────────────────────────────────────────
+
+const lang = await select({
+  message: 'Idioma do vault:',
+  choices: [
+    { name: 'PT  —  Portugues', value: 'pt' },
+    { name: 'EN  —  English',   value: 'en' },
+  ],
+})
+
 console.log()
 
 // ── AI Tools ──────────────────────────────────────────────────────────────
@@ -292,14 +302,6 @@ const mode = await select({
       value: 'Projeto',
       description: '  Para projetos com estrutura definida, time, ou spec/PRD.',
     },
-  ],
-})
-
-const lang = await select({
-  message: 'Idioma do vault:',
-  choices: [
-    { name: 'PT  —  Portugues', value: 'pt' },
-    { name: 'EN  —  English',   value: 'en' },
   ],
 })
 
