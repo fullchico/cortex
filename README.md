@@ -34,12 +34,11 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 O instalador pergunta qual agent voce usa:
 
-| Agent | O que instala | Vault recomendado |
-|-------|-------------|-------------------|
-| **Claude Code** | Skill `/cortex` em `~/.claude/skills/` | Qualquer path |
-| **Cursor** | `.cursorrules` + `.cursorignore` no projeto | Qualquer path |
-| **Copilot** | `.github/copilot-instructions.md` no projeto | Dentro do projeto |
-| **Todos** | Tudo acima | Dentro do projeto |
+| Agent | Instalacao | Vault recomendado |
+|-------|-----------|-------------------|
+| **Claude Code** | Automatica (copia skill) | Qualquer path |
+| **Cursor** | Mostra comandos para copiar | Qualquer path |
+| **Copilot** | Mostra comandos para copiar | Dentro do projeto |
 
 ### Setup manual
 
