@@ -291,7 +291,7 @@ export function createVault(vars) {
   const { LANG, MODE } = vars
   const vaultPath = join(process.cwd(), '.cortex')
   const isEN = LANG === 'en'
-  const isLivre = MODE === 'Livre' || MODE === 'Free'
+  const isLivre = MODE === 'Freestyled' || MODE === 'Livre' || MODE === 'Free'
   const dirs = DIRS[isEN ? 'en' : 'pt'][isLivre ? 'livre' : 'projeto']
   const back = isEN ? 'Project Memory' : 'Memoria Projeto'
 

@@ -32,7 +32,7 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 ? Nome do projeto:                my-app
 ? Descricao (1 frase):            Sistema de gestao de tarefas
 ? Stack:                          Node.js + React + PostgreSQL
-? Modo:                           Projeto / Livre
+? Modo:                           Freestyled / Projeto
 ? Idioma:                         PT / EN
 ? Tem spec ou PRD para importar?  S/N
 
@@ -56,20 +56,9 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 
 ## 2 modos
 
-### Projeto — vault completo
+### Freestyled ✦ recomendado
 
-Para qualquer projeto que precisa de estrutura. Vault com decisoes, arquitetura, entidades, regras de negocio.
-
-Durante o init:
-```
-"Tem spec, PRD ou docs para importar?"
-→ Sim → diga "cortex start" e cole o doc. A IA distribui pelo vault.
-→ Nao → comeca vazio. A IA debate junto e o vault cresce a cada sessao.
-```
-
-### Livre — vault minimo
-
-Para devs no dia a dia. Zero configuracao. So timeline e contextos.
+Para devs no dia a dia. Zero configuracao. Vault minimo que cresce organicamente.
 
 ```
 .cortex/
@@ -79,7 +68,18 @@ Para devs no dia a dia. Zero configuracao. So timeline e contextos.
     └── contextos/
 ```
 
-Contextos surgem organicamente — a IA sugere no final de cada sessao.
+Contextos surgem com o uso — a IA sugere no final de cada sessao.
+
+### Projeto
+
+Para projetos com estrutura definida, time, ou spec/PRD. Vault completo com decisoes, arquitetura, entidades, regras de negocio.
+
+Durante o init:
+```
+"Tem spec, PRD ou docs para importar?"
+→ Sim → diga "cortex start" e cole o doc. A IA distribui pelo vault.
+→ Nao → comeca vazio. A IA debate junto e o vault cresce a cada sessao.
+```
 
 ---
 
