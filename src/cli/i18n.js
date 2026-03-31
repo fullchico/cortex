@@ -322,3 +322,6 @@ export function getPracticeDescriptions(lang, projectType) {
   }
   return { tests: L.testsFull, clean: L.cleanFull, solid: L.solidDesc }
 }
+
+/** Árvores pt/en (ex.: paridade de chaves nos testes). */
+export const locales = { pt, en }

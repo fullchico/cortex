@@ -19,7 +19,9 @@
     "templates"
   ],
   "scripts": {
-    "start": "node bin/cortex.js"
+    "start": "node bin/cortex.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "test:watch": "node --test --watch \"test/**/*.test.js\""
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0"
