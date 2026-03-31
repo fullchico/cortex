@@ -97,7 +97,7 @@ Contextos surgem com o uso — a IA sugere no final de cada sessao.
 
 ### Projeto
 
-Para projetos com estrutura definida, time, spec/PRD, ou que adotam DDD. Vault completo.
+Para projetos com estrutura definida, time, spec/PRD, ou que adotam DDD. Vault completo com DDD + SOLID ativos.
 
 ```
 .cortex/
@@ -157,6 +157,32 @@ Comecou no modo Freestyled e o projeto cresceu? Rode `npx cortex-ai` novamente:
 ```
 
 Sessoes, timeline e contextos existentes sao preservados. O `Projeto.md` original vira referencia wikilink na nova `Memoria Projeto.md`.
+
+---
+
+## Iniciar novo projeto
+
+Quer comecar do zero sem perder o historico? Rode `npx cortex-ai` em um vault existente:
+
+```
+  Vault Projeto detectado em .cortex/
+
+? O que deseja fazer?
+  ❯ Iniciar novo projeto  —  arquiva vault atual e comeca do zero
+    Configurar AI tools  —  adicionar ou atualizar CLAUDE.md, cursor rules, copilot
+    Sair
+
+  ✓ Vault anterior arquivado em .cortex/Anterior/2026-03-31/
+
+  [fluxo normal de inicializacao...]
+
+  ✦ Tudo pronto!
+
+  Vault criado em  →  ./.cortex/
+  Anterior em      →  ./.cortex/Anterior/2026-03-31/
+```
+
+O vault anterior e movido para `.cortex/Anterior/YYYY-MM-DD/` — disponivel no Obsidian como referencia historica. Funciona tanto para vaults Freestyled quanto Projeto.
 
 ---
 

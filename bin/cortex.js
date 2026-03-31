@@ -3,7 +3,7 @@
 import { select, input, confirm, checkbox } from '@inquirer/prompts'
 import { detectAiTools, vaultExists, detectVaultMode, detectVaultLang } from '../src/detect.js'
 import { installClaudeCode, installCursor, installCopilot, updateGitignore } from '../src/install.js'
-import { createVault, migrateVault, readFreestyledRoot } from '../src/vault.js'
+import { createVault, migrateVault, archiveVault, readFreestyledRoot } from '../src/vault.js'
 
 console.log()
 console.log('  ╔══════════════════════════════════════╗')
@@ -89,24 +89,82 @@ if (vaultExists()) {
     process.exit(0)
   }
 
-  console.log('  ⚠  Vault Projeto ja existe em .cortex/')
+  const existingMode = currentMode === 'Freestyled' ? 'Freestyled' : 'Projeto'
+  console.log(`  Vault ${existingMode} detectado em .cortex/`)
   console.log()
-  console.log('  Para reiniciar, remova .cortex/ e rode novamente.')
+
+  const action = await select({
+    message: 'O que deseja fazer?',
+    choices: [
+      {
+        name: 'Iniciar novo projeto  —  arquiva vault atual e comeca do zero',
+        value: 'new',
+        description: '  O vault atual vai para .cortex/Anterior/ e um novo e criado no lugar.',
+      },
+      {
+        name: 'Configurar AI tools  —  adicionar ou atualizar CLAUDE.md, cursor rules, copilot',
+        value: 'tools',
+      },
+      {
+        name: 'Sair',
+        value: 'exit',
+      },
+    ],
+  })
+
+  if (action === 'exit') {
+    console.log()
+    process.exit(0)
+  }
+
+  if (action === 'tools') {
+    console.log()
+    const existingLang = detectVaultLang()
+    const detectedTools = detectAiTools()
+    if (detectedTools.length > 0) {
+      console.log(`  Detectado no ambiente: ${detectedTools.join(', ')}`)
+      console.log()
+    }
+    const toolsToInstall = await checkbox({
+      message: 'Quais AI tools configurar?',
+      instructions: '  Espaco para selecionar · Enter para confirmar',
+      choices: [
+        { name: 'Claude Code  →  cria/atualiza CLAUDE.md',                    value: 'Claude Code', checked: detectedTools.includes('Claude Code') },
+        { name: 'Cursor       →  cria/atualiza .cursor/rules/',               value: 'Cursor',      checked: detectedTools.includes('Cursor') },
+        { name: 'Copilot      →  cria/atualiza .github/copilot-instructions.md', value: 'Copilot', checked: detectedTools.includes('Copilot') },
+      ],
+    })
+    console.log()
+    console.log('  Configurando...')
+    console.log()
+    if (toolsToInstall.includes('Claude Code')) installClaudeCode(existingLang)
+    if (toolsToInstall.includes('Cursor'))      installCursor(existingLang)
+    if (toolsToInstall.includes('Copilot'))     installCopilot(existingLang)
+    console.log()
+    console.log('  ✦ Pronto!')
+    console.log()
+    process.exit(0)
+  }
+
+  // action === 'new': cai no fluxo de init abaixo com archive antes de criar
   console.log()
-  process.exit(0)
 }
 
-const ok = await confirm({
-  message: `Inicializar vault em ${process.cwd()}/.cortex/ ?`,
-  default: true,
-})
+const archiveDate = new Date().toISOString().split('T')[0]
+const isReinit = vaultExists()
 
-if (!ok) {
-  console.log()
-  console.log('  Operacao cancelada.')
-  console.log('  Navegue ate a pasta do projeto e rode novamente.')
-  console.log()
-  process.exit(0)
+if (!isReinit) {
+  const ok = await confirm({
+    message: `Inicializar vault em ${process.cwd()}/.cortex/ ?`,
+    default: true,
+  })
+  if (!ok) {
+    console.log()
+    console.log('  Operacao cancelada.')
+    console.log('  Navegue ate a pasta do projeto e rode novamente.')
+    console.log()
+    process.exit(0)
+  }
 }
 
 console.log()
@@ -319,6 +377,7 @@ if (aiTools.includes('Claude Code')) installClaudeCode(lang)
 if (aiTools.includes('Cursor'))      installCursor(lang)
 if (aiTools.includes('Copilot'))     installCopilot(lang)
 
+if (isReinit) archiveVault(archiveDate)
 createVault(vars)
 updateGitignore()
 
@@ -328,6 +387,7 @@ console.log()
 console.log('  ✦ Tudo pronto!')
 console.log()
 console.log('  Vault criado em  →  ./.cortex/')
+if (isReinit) console.log(`  Anterior em      →  ./.cortex/Anterior/${archiveDate}/`)
 console.log('  Abra no Obsidian →  File > Open Vault > .cortex/')
 console.log()
 

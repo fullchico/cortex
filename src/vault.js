@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, renameSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -752,4 +752,17 @@ export function migrateVault(vars) {
   writeProjetoNotes(vaultPath, vars, true)
 
   console.log('  ✓ Vault migrado para modo Projeto em .cortex/')
+}
+
+export function archiveVault(date) {
+  const vaultPath = join(process.cwd(), '.cortex')
+  const archiveDir = join(vaultPath, 'Anterior', date)
+  mkdirSync(archiveDir, { recursive: true })
+
+  for (const entry of readdirSync(vaultPath, { withFileTypes: true })) {
+    if (entry.name.startsWith('.') || entry.name === 'Anterior') continue
+    renameSync(join(vaultPath, entry.name), join(archiveDir, entry.name))
+  }
+
+  console.log(`  ✓ Vault anterior arquivado em .cortex/Anterior/${date}/`)
 }
