@@ -1,0 +1,92 @@
+---
+description: Use when the user says "cortex end", "fechar sessao", "encerrar sessao", "end session". Saves conversation summary to vault.
+globs:
+alwaysApply: false
+---
+
+# Cortex End — Fechar sessao
+
+## Fluxo
+
+1. Detectar vault em `./.cortex/`
+2. Analisar TODA a conversa e extrair:
+
+| Campo | O que capturar |
+|-------|----------------|
+| Decisoes | Regras novas, escolhas, definicoes validadas |
+| Padroes | Estruturas de codigo, convencoes descobertas |
+| Bugs encontrados | Problemas, comportamentos inesperados |
+| Proximos passos | Pendencias para proxima sessao |
+
+3. Criar/atualizar nota de timeline:
+   - Verificar se `./.cortex/Sessoes/timeline/YYYY-MM-DD.md` existe
+   - Mesmo dia → APPEND `## Continuacao — [Tema]`
+   - Nao existe → criar com template
+
+4. Se havia contexto ativo:
+   - Ler `./.cortex/Sessoes/contextos/<nome>.md`
+   - Atualizar com decisoes, padroes, bugs, referencia para sessao de hoje
+
+5. Se sem contexto ativo:
+   - Sugerir: "Trabalhamos bastante em [tema detectado]. Quer criar um contexto?"
+
+6. Atualizar notas de referencia (ler antes de editar — nao duplicar):
+
+| Aconteceu | Arquivo |
+|-----------|---------|
+| Decisao confirmada | `./.cortex/Decisoes/Definicoes Travadas.md` |
+| Questao resolvida | `./.cortex/Decisoes/Questoes em Aberto.md` (marcar [x]) |
+| Questao nova | `./.cortex/Decisoes/Questoes em Aberto.md` (adicionar) |
+| Anti-pattern | `./.cortex/Decisoes/Anti-patterns.md` |
+| Entidade criada/alterada | `./.cortex/Dominio/Entidades.md` |
+| Termo novo | `./.cortex/Dominio/Glossario de Dominio.md` |
+| Modulo criado | `./.cortex/Arquitetura/Mapa de Modulos.md` |
+| Endpoint criado | `./.cortex/Arquitetura/Contratos API.md` |
+
+7. Sugestoes de melhoria (verificar oportunidades encontradas durante a sessao):
+
+| Oportunidade | Verificar |
+|---|---|
+| Testes faltando | Codigo sem cobertura ou sem teste associado |
+| Clean Code | Funcoes longas, nomes confusos, comentarios desnecessarios |
+| Clean Architecture | Dependencias cruzando camadas erradas |
+| SOLID | Classe com mais de uma responsabilidade, aberta para modificacao, etc. |
+
+Regra: **nao interromper o fluxo** — se encontrou, adicionar como `- [ ]` nos Proximos Passos da nota de timeline. Nao sugerir o que ja esta feito.
+
+Se vault tem `./.cortex/Projeto.md` com secao `## Boas Praticas`: priorizar as praticas listadas.
+
+8. Atualizar indice `./.cortex/Sessoes/Sessoes - Memoria Temporal.md` se nota nova
+
+9. Confirmar:
+```
+Sessao salva:
+- Timeline: ./.cortex/Sessoes/timeline/YYYY-MM-DD.md
+- Contexto: <nome> (se aplicavel)
+- Refs atualizadas: [lista]
+```
+
+## Template de nota de timeline
+
+```markdown
+# YYYY-MM-DD
+
+tags: [sessao, timeline]
+
+---
+
+## Contextos tocados
+- [[contextos/<nome>]] — resumo
+
+## Decisoes
+-
+
+## Proximos passos
+- [ ]
+```
+
+## Regras
+
+- Ler antes de editar — NAO duplicar
+- Conversa curta = nota curta — nao forcar conteudo
+- Uma nota por dia — append se ja existe

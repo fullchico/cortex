@@ -1,6 +1,7 @@
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { t } from './cli/i18n.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
@@ -17,19 +18,19 @@ function wrap(content) {
 }
 
 // Escreve arquivo novo ou appenda bloco cortex ao existente
-function installOrAppend(dest, content, label) {
+function installOrAppend(dest, content, label, lang) {
   if (!existsSync(dest)) {
     writeFileSync(dest, wrap(content))
-    console.log(`  ✓ Criou ${label}`)
+    console.log(t(lang, 'installLog.createdFile', { label }))
     return
   }
   const existing = readFileSync(dest, 'utf8')
   if (hasCortex(existing)) {
-    console.log(`  ✓ ${label} ja tem protocolo Cortex`)
+    console.log(t(lang, 'installLog.hasProtocol', { label }))
     return
   }
   writeFileSync(dest, existing.trimEnd() + '\n\n' + wrap(content))
-  console.log(`  ✓ Cortex adicionado ao ${label} existente`)
+  console.log(t(lang, 'installLog.appended', { label }))
 }
 
 // Substitui paths PT → EN nos templates para vaults EN
@@ -73,7 +74,7 @@ function readTemplate(relPath, lang) {
 
 export function installClaudeCode(lang = 'pt') {
   const dest = join(process.cwd(), 'CLAUDE.md')
-  installOrAppend(dest, readTemplate('CLAUDE.md', lang), 'CLAUDE.md')
+  installOrAppend(dest, readTemplate('CLAUDE.md', lang), 'CLAUDE.md', lang)
 }
 
 export function installCursor(lang = 'pt') {
@@ -84,11 +85,11 @@ export function installCursor(lang = 'pt') {
   for (const rule of rules) {
     const dest = join(rulesDir, rule)
     if (existsSync(dest)) {
-      console.log(`  ✓ .cursor/rules/${rule} ja tem protocolo Cortex`)
+      console.log(t(lang, 'installLog.cursorHasProtocol', { rule }))
       continue
     }
     writeFileSync(dest, readTemplate(`cursor/${rule}`, lang))
-    console.log(`  ✓ Criou .cursor/rules/${rule}`)
+    console.log(t(lang, 'installLog.cursorCreated', { rule }))
   }
 }
 
@@ -97,22 +98,22 @@ export function installCopilot(lang = 'pt') {
   mkdirSync(githubDir, { recursive: true })
 
   const dest = join(githubDir, 'copilot-instructions.md')
-  installOrAppend(dest, readTemplate('copilot/copilot-instructions.md', lang), '.github/copilot-instructions.md')
+  installOrAppend(dest, readTemplate('copilot/copilot-instructions.md', lang), '.github/copilot-instructions.md', lang)
 }
 
-export function updateGitignore() {
+export function updateGitignore(lang = 'pt') {
   const gitignorePath = join(process.cwd(), '.gitignore')
   const entry = '.cortex/'
 
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, 'utf8')
     if (content.includes(entry)) {
-      console.log('  ✓ .cortex/ ja esta no .gitignore')
+      console.log(t(lang, 'installLog.gitignoreHas'))
       return
     }
     writeFileSync(gitignorePath, content + '\n# Cortex vault\n' + entry + '\n')
   } else {
     writeFileSync(gitignorePath, '# Cortex vault\n' + entry + '\n')
   }
-  console.log('  ✓ Adicionou .cortex/ ao .gitignore')
+  console.log(t(lang, 'installLog.gitignoreAdded'))
 }

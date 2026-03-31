@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, cpSync, rmSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { t } from './cli/i18n.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
@@ -709,14 +710,14 @@ export function createVault(vars) {
 
   if (isLivre) {
     writeFileSync(join(vaultPath, isEN ? 'Project.md' : 'Projeto.md'), buildLivreRoot(vars, LANG))
-    console.log('  ✓ Vault criado em .cortex/')
+    console.log(t(LANG, 'vaultLog.created'))
     return
   }
 
   // Modo Projeto
   writeFileSync(join(vaultPath, isEN ? 'Project Memory.md' : 'Memoria Projeto.md'), buildProjectMemory(vars, LANG))
   writeProjetoNotes(vaultPath, vars)
-  console.log('  ✓ Vault criado em .cortex/')
+  console.log(t(LANG, 'vaultLog.created'))
 }
 
 export function migrateVault(vars) {
@@ -751,10 +752,10 @@ export function migrateVault(vars) {
   // Criar notas do Projeto sem sobrescrever o que já existe
   writeProjetoNotes(vaultPath, vars, true)
 
-  console.log('  ✓ Vault migrado para modo Projeto em .cortex/')
+  console.log(t(LANG, 'vaultLog.migrated'))
 }
 
-export function archiveVault(date) {
+export function archiveVault(date, lang = 'pt') {
   const vaultPath = join(process.cwd(), '.cortex')
 
   // Evita conflito se ja existe arquivo do mesmo dia
@@ -775,5 +776,5 @@ export function archiveVault(date) {
     rmSync(src, { recursive: true, force: true })
   }
 
-  console.log(`  ✓ Vault anterior arquivado em .cortex/Anterior/${archiveName}/`)
+  console.log(t(lang, 'vaultLog.archived', { archiveName }))
 }
