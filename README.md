@@ -1,6 +1,6 @@
 # Cortex
 
-**AI hallucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
+**AI Alucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
 
 Cortex e um framework que estrutura o contexto do seu projeto em um vault Obsidian. O AI consulta antes de codar — e produz codigo preciso.
 
