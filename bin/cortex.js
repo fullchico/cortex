@@ -29,94 +29,40 @@ console.log()
 
 // ── Vault existente ───────────────────────────────────────────────────────
 
+let isMigrate   = false  // true = migrateVault (preserva sessoes)
+let isReinit    = false  // true = archiveVault + createVault
+let prefill     = {}     // defaults pre-preenchidos para migracao
+
 if (vaultExists()) {
   const currentMode = detectVaultMode()
-
-  if (currentMode === 'Freestyled') {
-    console.log('  Vault Freestyled detectado em .cortex/')
-    console.log()
-
-    const upgrade = await confirm({
-      message: 'Migrar para modo Projeto?',
-      default: false,
-    })
-
-    if (!upgrade) {
-      console.log()
-      console.log('  Vault Freestyled mantido.')
-      console.log()
-      process.exit(0)
-    }
-
-    console.log()
-
-    // Ler info existente do vault como defaults (usando lang detectado do vault)
-    const existingLang = detectVaultLang()
-    const existing = readFreestyledRoot(existingLang)
-
-    const migName = await input({
-      message: 'Nome do projeto:',
-      default: existing.name || undefined,
-      validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
-    })
-
-    const migDescription = await input({
-      message: 'Descricao em 1 frase:',
-      default: existing.description || undefined,
-      validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
-    })
-
-    const migStack = await input({
-      message: 'Stack principal:',
-      default: existing.stack || 'ainda nao sei',
-    })
-
-    const migVars = {
-      NAME: migName.trim(),
-      DESCRIPTION: migDescription.trim(),
-      STACK: migStack.trim(),
-      MODE: 'Projeto',
-      LANG: lang,
-      DATE: new Date().toISOString().split('T')[0],
-    }
-
-    console.log()
-    console.log('  Migrando...')
-    console.log()
-
-    migrateVault(migVars)
-
-    console.log()
-    console.log('  ✦ Migrado para modo Projeto!')
-    console.log()
-    console.log('  Sessoes e contextos existentes preservados.')
-    console.log(`  Memoria Projeto.md referencia o [[${lang === 'en' ? 'Project' : 'Projeto'}]] original.`)
-    console.log()
-    process.exit(0)
-  }
-
-  const existingMode = currentMode === 'Freestyled' ? 'Freestyled' : 'Projeto'
-  console.log(`  Vault ${existingMode} detectado em .cortex/`)
+  console.log(`  Vault ${currentMode} detectado em .cortex/`)
   console.log()
 
-  const action = await select({
-    message: 'O que deseja fazer?',
-    choices: [
-      {
-        name: 'Iniciar novo projeto  —  arquiva vault atual e comeca do zero',
-        value: 'new',
-        description: '  O vault atual vai para .cortex/Anterior/ e um novo e criado no lugar.',
-      },
-      {
-        name: 'Configurar AI tools  —  adicionar ou atualizar CLAUDE.md, cursor rules, copilot',
-        value: 'tools',
-      },
-      {
-        name: 'Sair',
-        value: 'exit',
-      },
-    ],
-  })
+  const choices = [
+    {
+      name:  'Iniciar novo projeto  —  arquiva vault atual e comeca do zero',
+      value: 'new',
+      description: '  O vault atual vai para .cortex/Anterior/ e um novo e criado no lugar.',
+    },
+  ]
+
+  if (currentMode === 'Freestyled') {
+    choices.push({
+      name:  'Migrar para modo Projeto  —  preserva sessoes e contextos',
+      value: 'migrate',
+      description: '  Adiciona estrutura Projeto ao vault. Sessoes e timeline preservados.',
+    })
+  }
+
+  choices.push(
+    {
+      name:  'Configurar AI tools  —  adicionar ou atualizar CLAUDE.md, cursor rules, copilot',
+      value: 'tools',
+    },
+    { name: 'Sair', value: 'exit' },
+  )
+
+  const action = await select({ message: 'O que deseja fazer?', choices })
 
   if (action === 'exit') {
     console.log()
@@ -134,9 +80,9 @@ if (vaultExists()) {
       message: 'Quais AI tools configurar?',
       instructions: '  Espaco para selecionar · Enter para confirmar',
       choices: [
-        { name: 'Claude Code  →  cria/atualiza CLAUDE.md',                    value: 'Claude Code', checked: detectedTools.includes('Claude Code') },
-        { name: 'Cursor       →  cria/atualiza .cursor/rules/',               value: 'Cursor',      checked: detectedTools.includes('Cursor') },
-        { name: 'Copilot      →  cria/atualiza .github/copilot-instructions.md', value: 'Copilot', checked: detectedTools.includes('Copilot') },
+        { name: 'Claude Code  →  cria/atualiza CLAUDE.md',                       value: 'Claude Code', checked: detectedTools.includes('Claude Code') },
+        { name: 'Cursor       →  cria/atualiza .cursor/rules/',                  value: 'Cursor',      checked: detectedTools.includes('Cursor') },
+        { name: 'Copilot      →  cria/atualiza .github/copilot-instructions.md', value: 'Copilot',     checked: detectedTools.includes('Copilot') },
       ],
     })
     console.log()
@@ -151,14 +97,22 @@ if (vaultExists()) {
     process.exit(0)
   }
 
-  // action === 'new': cai no fluxo de init abaixo com archive antes de criar
+  if (action === 'migrate') {
+    isMigrate = true
+    // Pre-preencher com dados do vault existente
+    const existingLang = detectVaultLang()
+    prefill = readFreestyledRoot(existingLang)
+  } else {
+    // action === 'new'
+    isReinit = true
+  }
+
   console.log()
 }
 
-const archiveDate = new Date().toISOString().split('T')[0]
-const isReinit = vaultExists()
+// ── Confirmacao (apenas novo vault sem vault existente) ───────────────────
 
-if (!isReinit) {
+if (!isReinit && !isMigrate && !vaultExists()) {
   const ok = await confirm({
     message: `Inicializar vault em ${process.cwd()}/.cortex/ ?`,
     default: true,
@@ -170,9 +124,8 @@ if (!isReinit) {
     console.log()
     process.exit(0)
   }
+  console.log()
 }
-
-console.log()
 
 // ── AI Tools ──────────────────────────────────────────────────────────────
 
@@ -216,11 +169,13 @@ console.log()
 
 const name = await input({
   message: 'Nome do projeto:',
+  default: prefill.name || undefined,
   validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
 })
 
 const description = await input({
   message: 'Descricao em 1 frase:',
+  default: prefill.description || undefined,
   validate: (v) => v.trim().length > 0 || 'Campo obrigatorio',
 })
 
@@ -286,6 +241,7 @@ console.log()
 
 const mode = await select({
   message: 'Modo do vault:',
+  default: isMigrate ? 'Projeto' : 'Freestyled',
   choices: [
     {
       name: 'Freestyled  ✦  minimo e organico — timeline + contextos. Cresce com o uso.',
@@ -337,9 +293,9 @@ if (mode === 'Freestyled') {
     message: 'Boas praticas a adotar? (opcional — Enter para pular)',
     instructions: '  Espaco para selecionar · Enter para confirmar',
     choices: [
-      { name: isEN ? 'Unit tests'                      : 'Testes unitarios',              value: 'tests', description: `  ${desc.tests}` },
-      { name: 'Clean Architecture + Clean Code',                                           value: 'clean', description: `  ${desc.clean}` },
-      { name: isEN ? 'SOLID Principles'                : 'Principios SOLID',              value: 'solid', description: `  ${desc.solid}` },
+      { name: isEN ? 'Unit tests'                 : 'Testes unitarios',         value: 'tests', description: `  ${desc.tests}` },
+      { name: 'Clean Architecture + Clean Code',                                 value: 'clean', description: `  ${desc.clean}` },
+      { name: isEN ? 'SOLID Principles'           : 'Principios SOLID',         value: 'solid', description: `  ${desc.solid}` },
     ],
   })
 }
@@ -374,18 +330,25 @@ if (aiTools.includes('Claude Code')) installClaudeCode(lang)
 if (aiTools.includes('Cursor'))      installCursor(lang)
 if (aiTools.includes('Copilot'))     installCopilot(lang)
 
-if (isReinit) {
-  try {
-    archiveVault(archiveDate)
-  } catch (err) {
-    console.error()
-    console.error('  ✗ Falha ao arquivar vault anterior:', err.message)
-    console.error('  Abortando para nao corromper o vault.')
-    console.error()
-    process.exit(1)
+const archiveDate = vars.DATE
+
+if (isMigrate) {
+  migrateVault(vars)
+} else {
+  if (isReinit) {
+    try {
+      archiveVault(archiveDate)
+    } catch (err) {
+      console.error()
+      console.error('  ✗ Falha ao arquivar vault anterior:', err.message)
+      console.error('  Abortando para nao corromper o vault.')
+      console.error()
+      process.exit(1)
+    }
   }
+  createVault(vars)
 }
-createVault(vars)
+
 updateGitignore()
 
 // ── Pronto ────────────────────────────────────────────────────────────────
@@ -393,8 +356,15 @@ updateGitignore()
 console.log()
 console.log('  ✦ Tudo pronto!')
 console.log()
-console.log('  Vault criado em  →  ./.cortex/')
-if (isReinit) console.log(`  Anterior em      →  ./.cortex/Anterior/${archiveDate}/`)
+
+if (isMigrate) {
+  console.log('  Vault migrado em  →  ./.cortex/')
+  console.log(`  Memoria referencia o [[${lang === 'en' ? 'Project' : 'Projeto'}]] original.`)
+} else {
+  console.log('  Vault criado em  →  ./.cortex/')
+  if (isReinit) console.log(`  Anterior em      →  ./.cortex/Anterior/${archiveDate}/`)
+}
+
 console.log('  Abra no Obsidian →  File > Open Vault > .cortex/')
 console.log()
 
