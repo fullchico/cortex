@@ -25,7 +25,7 @@ cd cortex && npm link
 cortex-ai
 ```
 
-O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
+O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 
 ```
 ? Qual AI tool voce usa?          Claude Code / Cursor / Copilot / Todos
@@ -39,10 +39,10 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
   ✓ Criou CLAUDE.md
   ✓ Criou .cursor/rules/cortex-*.mdc
   ✓ Criou .github/copilot-instructions.md
-  ✓ Vault criado em ./cortex/
-  ✓ Adicionou cortex/ ao .gitignore
+  ✓ Vault criado em ./.cortex/
+  ✓ Adicionou .cortex/ ao .gitignore
 
-  Abra ./cortex/ no Obsidian como vault
+  Abra ./.cortex/ no Obsidian como vault
   Diga "cortex start" para comecar
 ```
 
@@ -72,7 +72,7 @@ Durante o init:
 Para devs no dia a dia. Zero configuracao. So timeline e contextos.
 
 ```
-cortex/
+.cortex/
 ├── Projeto.md
 └── Sessoes/
     ├── timeline/
@@ -144,24 +144,24 @@ my-project/
 │   └── cortex-end.mdc
 ├── .github/
 │   └── copilot-instructions.md     ← Copilot (commitado)
-├── cortex/                         ← vault (gitignored)
+├── .cortex/                         ← vault (gitignored)
 │   ├── .spec.md                    ← blueprint customizavel
 │   ├── Memoria Projeto.md
 │   └── Sessoes/
 │       ├── timeline/
 │       └── contextos/
-└── .gitignore                      ← cortex/ ignorado
+└── .gitignore                      ← .cortex/ ignorado
 ```
 
 **Commitado:** `CLAUDE.md`, `.cursor/rules/`, `.github/` — todo dev do time tem o mesmo comportamento de IA.
 
-**Gitignored:** `./cortex/` — memoria pessoal, contexto sensivel.
+**Gitignored:** `./.cortex/` — memoria pessoal, contexto sensivel.
 
 ---
 
 ## Customizar o vault
 
-O blueprint do vault esta em `./cortex/.spec.md`. Edite para:
+O blueprint do vault esta em `./.cortex/.spec.md`. Edite para:
 
 - Adicionar notas especificas do projeto
 - Remover notas que nao usa

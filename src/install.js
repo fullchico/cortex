@@ -46,17 +46,17 @@ export function installCopilot() {
 
 export function updateGitignore() {
   const gitignorePath = join(process.cwd(), '.gitignore')
-  const entry = 'cortex/'
+  const entry = '.cortex/'
 
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, 'utf8')
     if (content.includes(entry)) {
-      console.log('  ✓ cortex/ ja esta no .gitignore')
+      console.log('  ✓ .cortex/ ja esta no .gitignore')
       return
     }
     writeFileSync(gitignorePath, content + '\n# Cortex vault\n' + entry + '\n')
   } else {
     writeFileSync(gitignorePath, '# Cortex vault\n' + entry + '\n')
   }
-  console.log('  ✓ Adicionou cortex/ ao .gitignore')
+  console.log('  ✓ Adicionou .cortex/ ao .gitignore')
 }

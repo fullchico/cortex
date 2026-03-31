@@ -24,5 +24,5 @@ export function detectAiTools() {
 }
 
 export function vaultExists() {
-  return existsSync(join(process.cwd(), 'cortex'))
+  return existsSync(join(process.cwd(), '.cortex'))
 }

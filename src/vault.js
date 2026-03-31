@@ -198,7 +198,7 @@ function buildSpec(vars) {
 
 export function createVault(vars) {
   const { NAME, LANG, MODE } = vars
-  const vaultPath = join(process.cwd(), 'cortex')
+  const vaultPath = join(process.cwd(), '.cortex')
   const isEN = LANG === 'en'
   const isLivre = MODE === 'Livre' || MODE === 'Free'
   const structure = isEN
