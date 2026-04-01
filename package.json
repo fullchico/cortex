@@ -28,7 +28,8 @@
   "files": [
     "bin",
     "src",
-    "templates"
+    "templates",
+    "README.md"
   ],
   "scripts": {
     "start": "node bin/cortex.js",

@@ -1,5 +1,9 @@
 # Cortex
 
+[![npm](https://img.shields.io/npm/v/@fullchico/cortex-ai)](https://www.npmjs.com/package/@fullchico/cortex-ai)
+[![license](https://img.shields.io/npm/l/@fullchico/cortex-ai)](LICENSE)
+[![node](https://img.shields.io/node/v/@fullchico/cortex-ai)](package.json)
+
 **AI alucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
 
 Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta antes de codar — e produz codigo preciso.
@@ -9,14 +13,11 @@ Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta a
 Na raiz do seu projeto:
 
 ```bash
-# Via npm
-npx cortex-ai
-
-# Via GitHub (sem publicar no npm)
-npx github:fullchico/cortex
+# Via npm (recomendado)
+npx @fullchico/cortex-ai
 
 # Global
-npm install -g github:fullchico/cortex
+npm install -g @fullchico/cortex-ai
 
 # Local (dev)
 git clone https://github.com/fullchico/cortex.git
@@ -139,7 +140,7 @@ DDD e SOLID sao parte do protocolo ativo — antes de criar qualquer classe, a I
 
 ## Migracao Freestyled → Projeto
 
-Comecou no modo Freestyled e o projeto cresceu? Rode `npx cortex-ai` novamente:
+Comecou no modo Freestyled e o projeto cresceu? Rode `npx @fullchico/cortex-ai` novamente:
 
 ```
   Vault Freestyled detectado em .cortex/
@@ -162,7 +163,7 @@ Sessoes, timeline e contextos existentes sao preservados. O `Projeto.md` origina
 
 ## Iniciar novo projeto
 
-Quer comecar do zero sem perder o historico? Rode `npx cortex-ai` em um vault existente:
+Quer comecar do zero sem perder o historico? Rode `npx @fullchico/cortex-ai` em um vault existente:
 
 ```
   Vault Projeto detectado em .cortex/
