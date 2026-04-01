@@ -685,7 +685,7 @@ export function readSpec(vaultPath) {
 
 // Escreve todas as notas do modo Projeto (exceto Memoria Projeto.md que é tratada separadamente)
 // safe = true: só cria arquivos que não existem (usado na migração)
-function writeProjetoNotes(vaultPath, vars, safe = false) {
+export function writeProjetoNotes(vaultPath, vars, safe = false) {
   const { LANG } = vars
   const isEN = LANG === 'en'
   const back = isEN ? 'Project Memory' : 'Memoria Projeto'

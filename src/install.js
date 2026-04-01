@@ -88,3 +88,67 @@ export function updateGitignore(lang = 'pt', vaultName = 'cortex') {
   }
   console.log(t(lang, 'installLog.gitignoreAdded', { vaultName }))
 }
+
+/**
+ * Substitui o bloco cortex em CLAUDE.md com o template atual.
+ * Preserva conteúdo fora do bloco.
+ */
+export function updateClaudeCode(lang = 'pt') {
+  const dest = join(process.cwd(), 'CLAUDE.md')
+  if (!existsSync(dest)) {
+    console.log(`  - CLAUDE.md not found, skipping`)
+    return
+  }
+  const existing = readFileSync(dest, 'utf8')
+  if (!hasCortex(existing)) {
+    console.log(`  - CLAUDE.md has no cortex block, skipping`)
+    return
+  }
+  const fresh = readTemplate('CLAUDE.md', lang)
+  const updated = existing.replace(
+    new RegExp(`${MARKER_START}[\\s\\S]*?${MARKER_END}`),
+    wrap(fresh),
+  )
+  writeFileSync(dest, updated)
+  console.log(`  ✓ CLAUDE.md — cortex block updated`)
+}
+
+/**
+ * Sobrescreve os 3 arquivos .mdc do Cursor com os templates atuais.
+ * Os .mdc não têm conteúdo personalizado do usuário.
+ */
+export function updateCursor(lang = 'pt') {
+  const rulesDir = join(process.cwd(), '.cursor', 'rules')
+  if (!existsSync(rulesDir)) {
+    console.log(`  - Cursor not configured, skipping`)
+    return
+  }
+  const rules = ['cortex-protocol.mdc', 'cortex-start.mdc', 'cortex-end.mdc']
+  for (const rule of rules) {
+    writeFileSync(join(rulesDir, rule), readTemplate(`cursor/${rule}`, lang))
+    console.log(`  ✓ .cursor/rules/${rule} — updated`)
+  }
+}
+
+/**
+ * Substitui o bloco cortex em copilot-instructions.md com o template atual.
+ */
+export function updateCopilot(lang = 'pt') {
+  const dest = join(process.cwd(), '.github', 'copilot-instructions.md')
+  if (!existsSync(dest)) {
+    console.log(`  - Copilot not configured, skipping`)
+    return
+  }
+  const existing = readFileSync(dest, 'utf8')
+  if (!hasCortex(existing)) {
+    console.log(`  - copilot-instructions.md has no cortex block, skipping`)
+    return
+  }
+  const fresh = readTemplate('copilot/copilot-instructions.md', lang)
+  const updated = existing.replace(
+    new RegExp(`${MARKER_START}[\\s\\S]*?${MARKER_END}`),
+    wrap(fresh),
+  )
+  writeFileSync(dest, updated)
+  console.log(`  ✓ .github/copilot-instructions.md — cortex block updated`)
+}
