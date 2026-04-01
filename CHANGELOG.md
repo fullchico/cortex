@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/fullchico/cortex/compare/v1.3.0...v1.3.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* update all templates to use dynamic vault name from .cortex marker ([12aae9a](https://github.com/fullchico/cortex/commit/12aae9afca682756f65a62330146cb5ca6f1d1c3))
+
 # [1.3.0](https://github.com/fullchico/cortex/compare/v1.2.0...v1.3.0) (2026-04-01)
 
 
