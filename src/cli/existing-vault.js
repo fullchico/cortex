@@ -1,5 +1,5 @@
 import { select } from '@inquirer/prompts'
-import { detectAiTools, vaultExists, detectVaultMode, detectVaultLang } from '../detect.js'
+import { detectAiTools, vaultExists, detectVaultMode, detectVaultLang, readVaultName } from '../detect.js'
 import { readFreestyledRoot } from '../vault.js'
 import { promptAiTools, installSelectedAiTools } from './ai-tools.js'
 import { t, vaultModeDisplayLabel } from './i18n.js'
@@ -18,14 +18,15 @@ export async function runExistingVaultFlow(lang) {
 
   const currentMode = detectVaultMode()
   const modeLabel = vaultModeDisplayLabel(lang, currentMode)
-  console.log(`  ${t(lang, 'existingVault.detected', { mode: modeLabel })}`)
+  const vaultName = readVaultName()
+  console.log(`  ${t(lang, 'existingVault.detected', { mode: modeLabel, vaultName })}`)
   console.log()
 
   const choices = [
     {
       name: t(lang, 'existingVault.new.name'),
       value: 'new',
-      description: t(lang, 'existingVault.new.description'),
+      description: t(lang, 'existingVault.new.description', { vaultName }),
     },
   ]
 

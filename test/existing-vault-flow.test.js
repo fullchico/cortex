@@ -21,6 +21,7 @@ mock.module('../src/detect.js', {
     detectVaultMode: () => detectVaultModeMock,
     detectVaultLang: () => detectVaultLangMock,
     detectAiTools: () => [],
+    readVaultName: () => 'cortex',
   },
 })
 

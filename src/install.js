@@ -79,12 +79,12 @@ export function updateGitignore(lang = 'pt', vaultName = 'cortex') {
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, 'utf8')
     if (content.includes(entry)) {
-      console.log(t(lang, 'installLog.gitignoreHas'))
+      console.log(t(lang, 'installLog.gitignoreHas', { vaultName }))
       return
     }
     writeFileSync(gitignorePath, content + '\n# Cortex vault\n' + entry + '\n')
   } else {
     writeFileSync(gitignorePath, '# Cortex vault\n' + entry + '\n')
   }
-  console.log(t(lang, 'installLog.gitignoreAdded'))
+  console.log(t(lang, 'installLog.gitignoreAdded', { vaultName }))
 }

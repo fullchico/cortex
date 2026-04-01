@@ -752,14 +752,14 @@ export function createVault(vars) {
 
   if (isLivre) {
     writeFileSync(join(vaultPath, isEN ? 'Project.md' : 'Projeto.md'), buildLivreRoot(vars, LANG))
-    console.log(t(LANG, 'vaultLog.created'))
+    console.log(t(LANG, 'vaultLog.created', { vaultName }))
     return
   }
 
   // Modo Projeto
   writeFileSync(join(vaultPath, isEN ? 'Project Memory.md' : 'Memoria Projeto.md'), buildProjectMemory(vars, LANG))
   writeProjetoNotes(vaultPath, vars)
-  console.log(t(LANG, 'vaultLog.created'))
+  console.log(t(LANG, 'vaultLog.created', { vaultName }))
 }
 
 export function migrateVault(vars) {
@@ -796,7 +796,7 @@ export function migrateVault(vars) {
   // Criar notas do Projeto sem sobrescrever o que já existe
   writeProjetoNotes(vaultPath, vars, true)
 
-  console.log(t(LANG, 'vaultLog.migrated'))
+  console.log(t(LANG, 'vaultLog.migrated', { vaultName }))
 }
 
 export function archiveVault(date, lang = 'pt') {
@@ -821,5 +821,5 @@ export function archiveVault(date, lang = 'pt') {
     rmSync(src, { recursive: true, force: true })
   }
 
-  console.log(t(lang, 'vaultLog.archived', { archiveName }))
+  console.log(t(lang, 'vaultLog.archived', { vaultName, archiveName }))
 }

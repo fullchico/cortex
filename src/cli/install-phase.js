@@ -43,23 +43,24 @@ export function runVaultInstall(opts) {
  * @param {string[]} p.aiTools
  * @param {'pt'|'en'} p.lang
  * @param {string} p.archiveDate
+ * @param {string} p.vaultName
  */
 export function printCompletionSummary(p) {
-  const { isMigrate, isReinit, hasSpec, aiTools, lang, archiveDate } = p
+  const { isMigrate, isReinit, hasSpec, aiTools, lang, archiveDate, vaultName } = p
 
   console.log()
   console.log(t(lang, 'done.allSet'))
   console.log()
 
   if (isMigrate) {
-    console.log(t(lang, 'done.migrated'))
+    console.log(t(lang, 'done.migrated', { vaultName }))
     console.log(t(lang, 'done.memoryRef'))
   } else {
-    console.log(t(lang, 'done.created'))
-    if (isReinit) console.log(t(lang, 'done.previous', { date: archiveDate }))
+    console.log(t(lang, 'done.created', { vaultName }))
+    if (isReinit) console.log(t(lang, 'done.previous', { date: archiveDate, vaultName }))
   }
 
-  console.log(t(lang, 'done.obsidian'))
+  console.log(t(lang, 'done.obsidian', { vaultName }))
   console.log()
 
   if (aiTools.length > 0) {

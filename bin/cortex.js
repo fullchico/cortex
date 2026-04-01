@@ -14,6 +14,7 @@ import {
   promptHasSpecImport,
 } from '../src/cli/mode-and-practices.js'
 import { runVaultInstall, printCompletionSummary } from '../src/cli/install-phase.js'
+import { slugifyVaultName } from '../src/vault.js'
 import { t } from '../src/cli/i18n.js'
 
 const lang = await promptLanguage()
@@ -28,7 +29,7 @@ const { isMigrate, isReinit, prefill } = existing
 
 if (!isReinit && !isMigrate && !vaultExists()) {
   const ok = await confirm({
-    message: t(lang, 'init.confirmVault', { path: `${process.cwd()}/.cortex/` }),
+    message: t(lang, 'init.confirmVault', { path: process.cwd() }),
     default: true,
   })
   if (!ok) {
@@ -90,4 +91,5 @@ printCompletionSummary({
   aiTools,
   lang,
   archiveDate: vars.DATE,
+  vaultName: slugifyVaultName(vars.NAME),
 })

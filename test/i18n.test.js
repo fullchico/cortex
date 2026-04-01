@@ -29,12 +29,20 @@ describe('i18n.t', () => {
 
   it('interpola placeholders', () => {
     assert.equal(
-      t('pt', 'init.confirmVault', { path: '/app/cortex/' }),
-      'Inicializar vault em /app/cortex/ ?',
+      t('pt', 'init.confirmVault', { path: '/app/my-project' }),
+      'Inicializar vault em /app/my-project ?',
     )
     assert.equal(
-      t('en', 'init.confirmVault', { path: '/app/cortex/' }),
-      'Initialize vault at /app/cortex/?',
+      t('en', 'init.confirmVault', { path: '/app/my-project' }),
+      'Initialize vault at /app/my-project?',
+    )
+    assert.equal(
+      t('pt', 'vaultLog.created', { vaultName: 'my-app' }),
+      '  ✓ Vault criado em my-app/',
+    )
+    assert.equal(
+      t('en', 'done.obsidian', { vaultName: 'my-app' }),
+      '  Open in Obsidian →  File > Open Vault > my-app/',
     )
   })
 
