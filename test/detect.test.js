@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
+import { tmpdir } from 'os'
 
 const testFileDir = dirname(fileURLToPath(import.meta.url))
 import {
@@ -10,6 +11,7 @@ import {
   vaultExists,
   detectVaultMode,
   detectVaultLang,
+  readVaultName,
 } from '../src/detect.js'
 
 describe('detect (cwd/homedir injetáveis)', () => {
@@ -93,5 +95,32 @@ describe('detect (cwd/homedir injetáveis)', () => {
   it('detectAiTools Claude com .claude no homedir', () => {
     mkdirSync(join(homedir, '.claude'))
     assert.deepEqual(detectAiTools({ cwd: root, homedir }), ['Claude Code'])
+  })
+})
+
+describe('readVaultName', () => {
+  let root
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), 'cortex-detect-'))
+  })
+  afterEach(() => rmSync(root, { recursive: true, force: true }))
+
+  it('retorna cortex como fallback quando nao ha marcador', () => {
+    assert.equal(readVaultName({ cwd: root }), 'cortex')
+  })
+
+  it('le nome do arquivo marcador .cortex', () => {
+    writeFileSync(join(root, '.cortex'), JSON.stringify({ vault: 'banana' }))
+    assert.equal(readVaultName({ cwd: root }), 'banana')
+  })
+
+  it('fallback cortex se JSON invalido', () => {
+    writeFileSync(join(root, '.cortex'), 'not-json')
+    assert.equal(readVaultName({ cwd: root }), 'cortex')
+  })
+
+  it('fallback cortex se vault ausente no JSON', () => {
+    writeFileSync(join(root, '.cortex'), JSON.stringify({}))
+    assert.equal(readVaultName({ cwd: root }), 'cortex')
   })
 })

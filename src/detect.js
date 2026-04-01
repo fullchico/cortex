@@ -1,4 +1,4 @@
-import { existsSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import os from 'os'
 
@@ -24,6 +24,22 @@ function resolveHomedir(opts) {
 /** @param {DetectOptions} [opts] */
 function resolveExists(opts) {
   return opts?.existsSync ?? existsSync
+}
+
+/** Lê o nome do vault a partir do marcador `.cortex` na raiz do projeto.
+ *  Retorna `'cortex'` como fallback (compatibilidade com projetos existentes).
+ *  @param {DetectOptions} [opts]
+ */
+export function readVaultName(opts) {
+  const markerPath = join(resolveCwd(opts), '.cortex')
+  const ex = resolveExists(opts)
+  if (!ex(markerPath)) return 'cortex'
+  try {
+    const raw = readFileSync(markerPath, 'utf8')
+    return JSON.parse(raw).vault ?? 'cortex'
+  } catch {
+    return 'cortex'
+  }
 }
 
 export function detectAiTools(opts) {
