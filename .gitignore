@@ -8,7 +8,6 @@ Thumbs.db
 
 # Node
 node_modules/
-package-lock.json
 
 # Testes (mkdtemp sob test/)
 test/tmp-*/
