@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/fullchico/cortex/compare/v1.1.1...v1.2.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* thread cwd+log through update functions, remove process.chdir ([409d833](https://github.com/fullchico/cortex/commit/409d83379030fed6ecc33a998ad91f959fb30e24))
+
+
+### Features
+
+* add cortex-ai context subcommand ([61a23ab](https://github.com/fullchico/cortex/commit/61a23ab661cec2034c84647b36ab4bf195f79087))
+* add cortex-ai status subcommand ([34bb191](https://github.com/fullchico/cortex/commit/34bb191e00a60e5cfe2df92c09251797ac7ce6d6))
+* add cortex-ai update subcommand ([d214f71](https://github.com/fullchico/cortex/commit/d214f71373f2153af1734bf69077b245ce6e8094))
+* add readSpec to parse .spec.md vars ([b06a0b5](https://github.com/fullchico/cortex/commit/b06a0b51f0dd8a8ccc3da2f2bceaa3a65fe73aa5))
+* add subcommand router, error boundary, --help, --version to bin/cortex.js ([53d53dc](https://github.com/fullchico/cortex/commit/53d53dc6e94d045b2e5b3a7173f3cd3037ecee5d))
+
 ## [1.1.1](https://github.com/fullchico/cortex/compare/v1.1.0...v1.1.1) (2026-04-01)
 
 

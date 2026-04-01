@@ -1,6 +1,6 @@
 {
   "name": "@fullchico/cortex-ai",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "AI memory framework for vibecoding — persistent context via Obsidian vault",
   "keywords": [
     "ai",
