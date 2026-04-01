@@ -611,9 +611,14 @@ function buildSpec(vars) {
 export function readFreestyledRoot(lang, opts) {
   const cwd = opts?.cwd ?? process.cwd()
   const markerPath = join(cwd, '.cortex')
-  const vaultName = existsSync(markerPath)
-    ? (JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex')
-    : 'cortex'
+  let vaultName = 'cortex'
+  if (existsSync(markerPath)) {
+    try {
+      vaultName = JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex'
+    } catch {
+      vaultName = 'cortex'
+    }
+  }
   const vaultPath = join(cwd, vaultName)
   const rootFile = lang === 'en' ? 'Project.md' : 'Projeto.md'
   const filePath = join(vaultPath, rootFile)
@@ -782,9 +787,14 @@ export function migrateVault(vars) {
 
 export function archiveVault(date, lang = 'pt') {
   const markerPath = join(process.cwd(), '.cortex')
-  const vaultName = existsSync(markerPath)
-    ? (JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex')
-    : 'cortex'
+  let vaultName = 'cortex'
+  if (existsSync(markerPath)) {
+    try {
+      vaultName = JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex'
+    } catch {
+      vaultName = 'cortex'
+    }
+  }
   const vaultPath = join(process.cwd(), vaultName)
 
   // Evita conflito se ja existe arquivo do mesmo dia
