@@ -25,7 +25,7 @@ describe('createVault (smoke)', () => {
         MODE: 'Freestyled',
         LANG: 'pt',
       })
-      const livre = join(dir, 'cortex', 'Projeto.md')
+      const livre = join(dir, slugifyVaultName(baseVars.NAME), 'Projeto.md')
       assert.ok(existsSync(livre))
       assert.match(readFileSync(livre, 'utf8'), /Smoke/)
     } finally {
@@ -44,8 +44,39 @@ describe('createVault (smoke)', () => {
         MODE: 'Projeto',
         LANG: 'en',
       })
-      assert.ok(existsSync(join(dir, 'cortex', 'Project Memory.md')))
-      assert.ok(existsSync(join(dir, 'cortex', 'Domain', 'Entities.md')))
+      const vaultName = slugifyVaultName(baseVars.NAME)
+      assert.ok(existsSync(join(dir, vaultName, 'Project Memory.md')))
+      assert.ok(existsSync(join(dir, vaultName, 'Domain', 'Entities.md')))
+    } finally {
+      process.chdir(prev)
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('cria marcador .cortex com nome slugificado', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cortex-smoke-'))
+    const prev = process.cwd()
+    try {
+      process.chdir(dir)
+      createVault({ ...baseVars, NAME: 'Banana App', MODE: 'Freestyled', LANG: 'pt' })
+      const marker = JSON.parse(readFileSync(join(dir, '.cortex'), 'utf8'))
+      assert.equal(marker.vault, 'banana-app')
+      assert.ok(existsSync(join(dir, 'banana-app', 'Projeto.md')))
+    } finally {
+      process.chdir(prev)
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('cria marcador .cortex com nome do baseVars slugificado', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cortex-smoke-'))
+    const prev = process.cwd()
+    try {
+      process.chdir(dir)
+      createVault({ ...baseVars, MODE: 'Freestyled', LANG: 'pt' })
+      const marker = JSON.parse(readFileSync(join(dir, '.cortex'), 'utf8'))
+      assert.equal(marker.vault, slugifyVaultName(baseVars.NAME))
+      assert.ok(existsSync(join(dir, slugifyVaultName(baseVars.NAME), 'Projeto.md')))
     } finally {
       process.chdir(prev)
       rmSync(dir, { recursive: true, force: true })
