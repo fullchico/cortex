@@ -319,6 +319,11 @@ ${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 | ${isEN ? 'Root' : 'Raiz'} | ${isEN ? 'Included entities' : 'Entidades incluidas'} | ${isEN ? 'Main invariant' : 'Invariante principal'} |
 |------|---------------------|---------------------|
 | _ex: Order_ | OrderItem, ShippingAddress | ${isEN ? 'total > 0' : 'total > 0'} |
+
+## ${isEN ? 'See also' : 'Ver tambem'}
+
+- [[Bounded Contexts]]
+- [[${isEN ? 'Domain Events' : 'Eventos de Dominio'}]]
 `
 }
 
@@ -348,6 +353,11 @@ ${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 | ${isEN ? 'Event' : 'Evento'} | ${isEN ? 'Emitted by' : 'Emitido por'} | ${isEN ? 'Data' : 'Dados'} | ${isEN ? 'Subscribers' : 'Assinantes'} |
 |--------|-------------|-------|------------|
 | _ex: UserRegistered_ | User aggregate | userId, email, createdAt | EmailService, AuditLog |
+
+## ${isEN ? 'See also' : 'Ver tambem'}
+
+- [[${isEN ? 'Entities' : 'Entidades'}]]
+- [[Bounded Contexts]]
 `
 }
 
@@ -393,6 +403,11 @@ ${isEN
 - Tem seus proprios types/interfaces
 - Nao importa diretamente de outro feature — usa shared/ ou eventos
 - Mesmo vocabulario que o back (NAO renomear \`user\` para \`loggedPerson\`)`}
+
+## ${isEN ? 'See also' : 'Ver tambem'}
+
+- [[${isEN ? 'Entities' : 'Entidades'}]]
+- [[${isEN ? 'Domain Events' : 'Eventos de Dominio'}]]
 `
 }
 
@@ -484,6 +499,12 @@ ${isEN ? 'Back' : 'Voltar'}: [[${back}]]
 | S — SRP | ${isEN ? 'One component = one visual or interaction responsibility' : 'Um componente = uma responsabilidade visual ou de interacao'} |
 | O — OCP | ${isEN ? 'Component composition instead of excessive conditional props' : 'Composicao de componentes em vez de props condicionais excessivos'} |
 | D — DIP | ${isEN ? 'Inject services via props/context, do not import directly' : 'Injetar servicos via props/context, nao importar diretamente'} |
+
+## ${isEN ? 'See also' : 'Ver tambem'}
+
+- [[${isEN ? 'Entities' : 'Entidades'}]]
+- [[Bounded Contexts]]
+- [[${isEN ? 'Domain Events' : 'Eventos de Dominio'}]]
 `
 }
 
