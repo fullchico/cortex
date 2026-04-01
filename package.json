@@ -2,7 +2,16 @@
   "name": "cortex-ai",
   "version": "0.1.0",
   "description": "AI memory framework for vibecoding — persistent context via Obsidian vault",
-  "keywords": ["ai", "context", "memory", "obsidian", "claude", "cursor", "copilot", "vibecoding"],
+  "keywords": [
+    "ai",
+    "context",
+    "memory",
+    "obsidian",
+    "claude",
+    "cursor",
+    "copilot",
+    "vibecoding"
+  ],
   "homepage": "https://github.com/fullchico/cortex",
   "repository": {
     "type": "git",
@@ -21,12 +30,23 @@
   "scripts": {
     "start": "node bin/cortex.js",
     "test": "node --test \"test/**/*.test.js\"",
-    "test:watch": "node --test --watch \"test/**/*.test.js\""
+    "test:watch": "node --test --watch \"test/**/*.test.js\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "husky": "^9.1.7",
+    "semantic-release": "^25.0.3"
   }
 }
