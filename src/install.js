@@ -72,9 +72,9 @@ export function installCopilot(lang = 'pt') {
   installOrAppend(dest, readTemplate('copilot/copilot-instructions.md', lang), '.github/copilot-instructions.md', lang)
 }
 
-export function updateGitignore(lang = 'pt') {
+export function updateGitignore(lang = 'pt', vaultName = 'cortex') {
   const gitignorePath = join(process.cwd(), '.gitignore')
-  const entry = 'cortex/'
+  const entry = `${vaultName}/`
 
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, 'utf8')

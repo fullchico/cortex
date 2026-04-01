@@ -1,5 +1,5 @@
 import { updateGitignore } from '../install.js'
-import { createVault, migrateVault, archiveVault } from '../vault.js'
+import { createVault, migrateVault, archiveVault, slugifyVaultName } from '../vault.js'
 import { installSelectedAiTools } from './ai-tools.js'
 import { t } from './i18n.js'
 
@@ -32,7 +32,7 @@ export function runVaultInstall(opts) {
     createVault(vars)
   }
 
-  updateGitignore(lang)
+  updateGitignore(lang, slugifyVaultName(vars.NAME))
 }
 
 /**
