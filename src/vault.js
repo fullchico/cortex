@@ -660,6 +660,29 @@ export function readFreestyledRoot(lang, opts) {
   return { name, description, stack }
 }
 
+/**
+ * Lê o arquivo .spec.md do vault e retorna o objeto vars.
+ * Retorna {} se o arquivo não existe ou não tem bloco de configuração.
+ * @param {string} vaultPath
+ * @returns {{ NAME?: string, DESCRIPTION?: string, STACK?: string, DATE?: string, MODE?: string, LANG?: string }}
+ */
+export function readSpec(vaultPath) {
+  const specPath = join(vaultPath, '.spec.md')
+  if (!existsSync(specPath)) return {}
+  const content = readFileSync(specPath, 'utf8')
+  const match = content.match(/```\n([\s\S]*?)```/)
+  if (!match) return {}
+  const vars = {}
+  for (const line of match[1].split('\n')) {
+    const sep = line.indexOf(':')
+    if (sep === -1) continue
+    const key = line.slice(0, sep).trim().toUpperCase()
+    const value = line.slice(sep + 1).trim()
+    if (key && value) vars[key] = value
+  }
+  return vars
+}
+
 // Escreve todas as notas do modo Projeto (exceto Memoria Projeto.md que é tratada separadamente)
 // safe = true: só cria arquivos que não existem (usado na migração)
 function writeProjetoNotes(vaultPath, vars, safe = false) {
