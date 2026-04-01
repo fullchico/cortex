@@ -124,3 +124,22 @@ describe('readVaultName', () => {
     assert.equal(readVaultName({ cwd: root }), 'cortex')
   })
 })
+
+describe('vaultExists com marcador', () => {
+  let root
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), 'cortex-detect-'))
+  })
+  afterEach(() => rmSync(root, { recursive: true, force: true }))
+
+  it('encontra vault nomeado pelo marcador', () => {
+    writeFileSync(join(root, '.cortex'), JSON.stringify({ vault: 'banana' }))
+    mkdirSync(join(root, 'banana'))
+    assert.ok(vaultExists({ cwd: root }))
+  })
+
+  it('nao encontra vault quando pasta nao existe mas marcador sim', () => {
+    writeFileSync(join(root, '.cortex'), JSON.stringify({ vault: 'banana' }))
+    assert.ok(!vaultExists({ cwd: root }))
+  })
+})

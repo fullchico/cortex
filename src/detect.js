@@ -66,13 +66,13 @@ export function detectAiTools(opts) {
 /** @param {DetectOptions} [opts] */
 export function vaultExists(opts) {
   const ex = resolveExists(opts)
-  return ex(join(resolveCwd(opts), 'cortex'))
+  return ex(join(resolveCwd(opts), readVaultName(opts)))
 }
 
 /** @param {DetectOptions} [opts] */
 export function detectVaultMode(opts) {
   const ex = resolveExists(opts)
-  const vaultPath = join(resolveCwd(opts), 'cortex')
+  const vaultPath = join(resolveCwd(opts), readVaultName(opts))
   if (!ex(vaultPath)) return null
   if (ex(join(vaultPath, 'Decisoes')) || ex(join(vaultPath, 'Decisions'))) return 'Projeto'
   return 'Freestyled'
@@ -81,7 +81,7 @@ export function detectVaultMode(opts) {
 /** @param {DetectOptions} [opts] */
 export function detectVaultLang(opts) {
   const ex = resolveExists(opts)
-  const vaultPath = join(resolveCwd(opts), 'cortex')
+  const vaultPath = join(resolveCwd(opts), readVaultName(opts))
   if (ex(join(vaultPath, 'Project.md')) || ex(join(vaultPath, 'Project Memory.md'))) return 'en'
   return 'pt'
 }
