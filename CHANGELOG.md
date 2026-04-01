@@ -1,3 +1,21 @@
+# [1.1.0](https://github.com/fullchico/cortex/compare/v1.0.1...v1.1.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* wrap JSON.parse in try/catch in archiveVault and readFreestyledRoot ([4c38468](https://github.com/fullchico/cortex/commit/4c38468b398743a9b251518dc87a1059ee66f309))
+
+
+### Features
+
+* add cross-links to vault builders for graph topology ([a1f9ea6](https://github.com/fullchico/cortex/commit/a1f9ea6e49f33025c8ba6e8ef57112ef59d02f6b))
+* add readVaultName to read vault location from .cortex marker ([d495b66](https://github.com/fullchico/cortex/commit/d495b666dffcc17bc2cc22a8828653304f8615cc))
+* add slugifyVaultName for dynamic vault folder naming ([410f1de](https://github.com/fullchico/cortex/commit/410f1dee66e66fb645fff235e9785cc0f3581b47))
+* createVault writes .cortex marker and uses slugified project name as vault folder ([e22e815](https://github.com/fullchico/cortex/commit/e22e8150f051d26dca558eed8284463c5c971f67))
+* implement dynamic vault naming and update detection functions to utilize .cortex marker ([8c6ee32](https://github.com/fullchico/cortex/commit/8c6ee32e19cc9232d44bf896dcf2fc68ccf5a7c8))
+* update vault detection functions to use dynamic vault name from marker ([e929619](https://github.com/fullchico/cortex/commit/e929619eb53cab1f9f77294985030f389e875119))
+* updateGitignore uses dynamic vault name from project ([2630e6c](https://github.com/fullchico/cortex/commit/2630e6c7c6831f895a7d6626d2b2840b7de20d17))
+
 ## [1.0.1](https://github.com/fullchico/cortex/compare/v1.0.0...v1.0.1) (2026-04-01)
 
 
