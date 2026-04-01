@@ -93,15 +93,15 @@ export function updateGitignore(lang = 'pt', vaultName = 'cortex') {
  * Substitui o bloco cortex em CLAUDE.md com o template atual.
  * Preserva conteúdo fora do bloco.
  */
-export function updateClaudeCode(lang = 'pt') {
-  const dest = join(process.cwd(), 'CLAUDE.md')
+export function updateClaudeCode(lang = 'pt', cwd = process.cwd(), log = console.log) {
+  const dest = join(cwd, 'CLAUDE.md')
   if (!existsSync(dest)) {
-    console.log(`  - CLAUDE.md not found, skipping`)
+    log(`  - CLAUDE.md not found, skipping`)
     return
   }
   const existing = readFileSync(dest, 'utf8')
   if (!hasCortex(existing)) {
-    console.log(`  - CLAUDE.md has no cortex block, skipping`)
+    log(`  - CLAUDE.md has no cortex block, skipping`)
     return
   }
   const fresh = readTemplate('CLAUDE.md', lang)
@@ -110,38 +110,38 @@ export function updateClaudeCode(lang = 'pt') {
     wrap(fresh),
   )
   writeFileSync(dest, updated)
-  console.log(`  ✓ CLAUDE.md — cortex block updated`)
+  log(`  ✓ CLAUDE.md — cortex block updated`)
 }
 
 /**
  * Sobrescreve os 3 arquivos .mdc do Cursor com os templates atuais.
  * Os .mdc não têm conteúdo personalizado do usuário.
  */
-export function updateCursor(lang = 'pt') {
-  const rulesDir = join(process.cwd(), '.cursor', 'rules')
+export function updateCursor(lang = 'pt', cwd = process.cwd(), log = console.log) {
+  const rulesDir = join(cwd, '.cursor', 'rules')
   if (!existsSync(rulesDir)) {
-    console.log(`  - Cursor not configured, skipping`)
+    log(`  - Cursor not configured, skipping`)
     return
   }
   const rules = ['cortex-protocol.mdc', 'cortex-start.mdc', 'cortex-end.mdc']
   for (const rule of rules) {
     writeFileSync(join(rulesDir, rule), readTemplate(`cursor/${rule}`, lang))
-    console.log(`  ✓ .cursor/rules/${rule} — updated`)
+    log(`  ✓ .cursor/rules/${rule} — updated`)
   }
 }
 
 /**
  * Substitui o bloco cortex em copilot-instructions.md com o template atual.
  */
-export function updateCopilot(lang = 'pt') {
-  const dest = join(process.cwd(), '.github', 'copilot-instructions.md')
+export function updateCopilot(lang = 'pt', cwd = process.cwd(), log = console.log) {
+  const dest = join(cwd, '.github', 'copilot-instructions.md')
   if (!existsSync(dest)) {
-    console.log(`  - Copilot not configured, skipping`)
+    log(`  - Copilot not configured, skipping`)
     return
   }
   const existing = readFileSync(dest, 'utf8')
   if (!hasCortex(existing)) {
-    console.log(`  - copilot-instructions.md has no cortex block, skipping`)
+    log(`  - copilot-instructions.md has no cortex block, skipping`)
     return
   }
   const fresh = readTemplate('copilot/copilot-instructions.md', lang)
@@ -150,5 +150,5 @@ export function updateCopilot(lang = 'pt') {
     wrap(fresh),
   )
   writeFileSync(dest, updated)
-  console.log(`  ✓ .github/copilot-instructions.md — cortex block updated`)
+  log(`  ✓ .github/copilot-instructions.md — cortex block updated`)
 }

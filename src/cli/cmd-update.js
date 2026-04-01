@@ -22,44 +22,37 @@ export async function buildUpdateResult(cwd) {
   const mode = detectVaultMode({ cwd })
 
   const lines = ['', '  Updating...', '']
+  const log = msg => lines.push(msg)
 
-  // Temporarily switch cwd so install functions (which use process.cwd()) work correctly
-  const prevCwd = process.cwd()
-  process.chdir(cwd)
+  lines.push('  AI tools:')
+  updateClaudeCode(lang, cwd, log)
+  updateCursor(lang, cwd, log)
+  updateCopilot(lang, cwd, log)
+  lines.push('')
 
-  try {
-    lines.push('  AI tools:')
-    updateClaudeCode(lang)
-    updateCursor(lang)
-    updateCopilot(lang)
-    lines.push('')
-
-    lines.push(`  Vault (${vaultName}/):`)
-    if (mode === 'Projeto') {
-      const vars = readSpec(vaultPath)
-      if (Object.keys(vars).length > 0) {
-        writeProjetoNotes(vaultPath, {
-          NAME: vars.NAME ?? vaultName,
-          DESCRIPTION: vars.DESCRIPTION ?? '',
-          STACK: vars.STACK ?? '',
-          DATE: vars.DATE ?? new Date().toISOString().split('T')[0],
-          MODE: vars.MODE ?? 'Projeto',
-          LANG: vars.LANG ?? lang,
-          PRACTICES: [],
-          PROJECT_TYPE: 'fullstack',
-        }, true)
-        lines.push('  ✓ Existing notes preserved')
-        lines.push('  + Missing notes added if any')
-      } else {
-        lines.push('  - .spec.md not found, skipping vault notes')
-      }
+  lines.push(`  Vault (${vaultName}/):`)
+  if (mode === 'Projeto') {
+    const vars = readSpec(vaultPath)
+    if (Object.keys(vars).length > 0) {
+      writeProjetoNotes(vaultPath, {
+        NAME: vars.NAME ?? vaultName,
+        DESCRIPTION: vars.DESCRIPTION ?? '',
+        STACK: vars.STACK ?? '',
+        DATE: vars.DATE ?? new Date().toISOString().split('T')[0],
+        MODE: vars.MODE ?? 'Projeto',
+        LANG: vars.LANG ?? lang,
+        PRACTICES: [],
+        PROJECT_TYPE: 'fullstack',
+      }, true)
+      lines.push('  ✓ Existing notes preserved')
+      lines.push('  + Missing notes added if any')
     } else {
-      lines.push('  - Freestyled: vault structure unchanged')
+      lines.push('  - .spec.md not found, skipping vault notes')
     }
-    lines.push('')
-  } finally {
-    process.chdir(prevCwd)
+  } else {
+    lines.push('  - Freestyled: vault structure unchanged')
   }
+  lines.push('')
 
   return { exitCode: 0, lines }
 }
