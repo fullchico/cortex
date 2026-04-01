@@ -1,9 +1,9 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync, existsSync, readFileSync } from 'fs'
+import { mkdtempSync, rmSync, existsSync, readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
-import { createVault, slugifyVaultName } from '../src/vault.js'
+import { createVault, slugifyVaultName, archiveVault } from '../src/vault.js'
 
 const baseVars = {
   NAME: 'Smoke',
@@ -77,6 +77,56 @@ describe('createVault (smoke)', () => {
       const marker = JSON.parse(readFileSync(join(dir, '.cortex'), 'utf8'))
       assert.equal(marker.vault, slugifyVaultName(baseVars.NAME))
       assert.ok(existsSync(join(dir, slugifyVaultName(baseVars.NAME), 'Projeto.md')))
+    } finally {
+      process.chdir(prev)
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('archiveVault move arquivos para Anterior/<date>/', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cortex-archive-'))
+    const prev = process.cwd()
+    try {
+      process.chdir(dir)
+      createVault({ ...baseVars, MODE: 'Freestyled', LANG: 'pt' })
+      const vaultName = slugifyVaultName(baseVars.NAME)
+      const vaultPath = join(dir, vaultName)
+
+      archiveVault('2026-01-01')
+
+      const archiveDir = join(vaultPath, 'Anterior', '2026-01-01')
+      assert.ok(existsSync(archiveDir), 'diretório de archive deve existir')
+      assert.ok(existsSync(join(archiveDir, 'Projeto.md')), 'Projeto.md deve estar no archive')
+
+      const remaining = readdirSync(vaultPath).filter(f => !f.startsWith('.') && f !== 'Anterior')
+      assert.equal(remaining.length, 0, 'raiz do vault deve estar vazia apos archive')
+    } finally {
+      process.chdir(prev)
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('archiveVault colisao de data cria pasta com timestamp', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cortex-archive-collision-'))
+    const prev = process.cwd()
+    try {
+      process.chdir(dir)
+      createVault({ ...baseVars, MODE: 'Freestyled', LANG: 'pt' })
+      const vaultName = slugifyVaultName(baseVars.NAME)
+      const vaultPath = join(dir, vaultName)
+
+      archiveVault('2026-01-01')
+
+      // Recriar conteúdo para segundo archive
+      createVault({ ...baseVars, MODE: 'Freestyled', LANG: 'pt' })
+
+      archiveVault('2026-01-01')
+
+      const anteriorDir = join(vaultPath, 'Anterior')
+      const entries = readdirSync(anteriorDir)
+      assert.equal(entries.length, 2, 'deve haver 2 entradas em Anterior/')
+      assert.ok(entries.includes('2026-01-01'), 'primeira entrada deve ser 2026-01-01')
+      assert.ok(entries.some(e => e.startsWith('2026-01-01-')), 'segunda entrada deve ter sufixo timestamp')
     } finally {
       process.chdir(prev)
       rmSync(dir, { recursive: true, force: true })
