@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, cpSync
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { t } from './cli/i18n.js'
+import { readVaultName } from './detect.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
@@ -610,15 +611,7 @@ function buildSpec(vars) {
  */
 export function readFreestyledRoot(lang, opts) {
   const cwd = opts?.cwd ?? process.cwd()
-  const markerPath = join(cwd, '.cortex')
-  let vaultName = 'cortex'
-  if (existsSync(markerPath)) {
-    try {
-      vaultName = JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex'
-    } catch {
-      vaultName = 'cortex'
-    }
-  }
+  const vaultName = readVaultName({ cwd })
   const vaultPath = join(cwd, vaultName)
   const rootFile = lang === 'en' ? 'Project.md' : 'Projeto.md'
   const filePath = join(vaultPath, rootFile)
@@ -786,15 +779,7 @@ export function migrateVault(vars) {
 }
 
 export function archiveVault(date, lang = 'pt') {
-  const markerPath = join(process.cwd(), '.cortex')
-  let vaultName = 'cortex'
-  if (existsSync(markerPath)) {
-    try {
-      vaultName = JSON.parse(readFileSync(markerPath, 'utf8')).vault ?? 'cortex'
-    } catch {
-      vaultName = 'cortex'
-    }
-  }
+  const vaultName = readVaultName()
   const vaultPath = join(process.cwd(), vaultName)
 
   // Evita conflito se ja existe arquivo do mesmo dia
