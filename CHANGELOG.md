@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/fullchico/cortex/compare/v1.1.0...v1.1.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* propagate dynamic vault name to all user-facing CLI messages ([f32429a](https://github.com/fullchico/cortex/commit/f32429a23a8c34a9a486dd8c4712b114cdf140ca))
+
 # [1.1.0](https://github.com/fullchico/cortex/compare/v1.0.1...v1.1.0) (2026-04-01)
 
 
