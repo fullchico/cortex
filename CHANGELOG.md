@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/fullchico/cortex/compare/v1.0.0...v1.0.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* rename vault folder from .cortex to cortex for Obsidian visibility ([a0eedc0](https://github.com/fullchico/cortex/commit/a0eedc034f33fea1211541cd7723c4991a2b3309))
+
 # 1.0.0 (2026-04-01)
 
 
