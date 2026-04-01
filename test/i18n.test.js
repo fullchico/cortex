@@ -29,12 +29,12 @@ describe('i18n.t', () => {
 
   it('interpola placeholders', () => {
     assert.equal(
-      t('pt', 'init.confirmVault', { path: '/app/.cortex/' }),
-      'Inicializar vault em /app/.cortex/ ?',
+      t('pt', 'init.confirmVault', { path: '/app/cortex/' }),
+      'Inicializar vault em /app/cortex/ ?',
     )
     assert.equal(
-      t('en', 'init.confirmVault', { path: '/app/.cortex/' }),
-      'Initialize vault at /app/.cortex/?',
+      t('en', 'init.confirmVault', { path: '/app/cortex/' }),
+      'Initialize vault at /app/cortex/?',
     )
   })
 

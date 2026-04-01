@@ -5,7 +5,7 @@ import { promptAiTools, installSelectedAiTools } from './ai-tools.js'
 import { t, vaultModeDisplayLabel } from './i18n.js'
 
 /**
- * Fluxo quando `.cortex/` já existe: migrar, reinit, só tools ou sair.
+ * Fluxo quando `cortex/` já existe: migrar, reinit, só tools ou sair.
  * @returns {Promise<
  *   | { kind: 'exit'; code?: number }
  *   | { kind: 'continue'; isMigrate: boolean; isReinit: boolean; prefill: Record<string, unknown> }

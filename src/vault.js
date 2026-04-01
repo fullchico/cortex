@@ -598,7 +598,7 @@ function buildSpec(vars) {
  * @param {{ cwd?: string }} [opts] cwd do projeto (default: process.cwd())
  */
 export function readFreestyledRoot(lang, opts) {
-  const vaultPath = join(opts?.cwd ?? process.cwd(), '.cortex')
+  const vaultPath = join(opts?.cwd ?? process.cwd(), 'cortex')
   const rootFile = lang === 'en' ? 'Project.md' : 'Projeto.md'
   const filePath = join(vaultPath, rootFile)
   if (!existsSync(filePath)) return {}
@@ -700,7 +700,7 @@ function writeProjetoNotes(vaultPath, vars, safe = false) {
 
 export function createVault(vars) {
   const { LANG, MODE } = vars
-  const vaultPath = join(process.cwd(), '.cortex')
+  const vaultPath = join(process.cwd(), 'cortex')
   const isEN = LANG === 'en'
   const isLivre = MODE === 'Freestyled' || MODE === 'Livre' || MODE === 'Free'
   const dirs = DIRS[isEN ? 'en' : 'pt'][isLivre ? 'livre' : 'projeto']
@@ -727,7 +727,7 @@ export function createVault(vars) {
 
 export function migrateVault(vars) {
   const { LANG } = vars
-  const vaultPath = join(process.cwd(), '.cortex')
+  const vaultPath = join(process.cwd(), 'cortex')
   const isEN = LANG === 'en'
   const freeRootName = isEN ? 'Project' : 'Projeto'
 
@@ -761,7 +761,7 @@ export function migrateVault(vars) {
 }
 
 export function archiveVault(date, lang = 'pt') {
-  const vaultPath = join(process.cwd(), '.cortex')
+  const vaultPath = join(process.cwd(), 'cortex')
 
   // Evita conflito se ja existe arquivo do mesmo dia
   const anteriorBase = join(vaultPath, 'Anterior')

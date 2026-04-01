@@ -24,10 +24,10 @@ git clone https://github.com/fullchico/cortex.git
 cd cortex && npm link
 ```
 
-O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
+O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
 
 ```
-? Inicializar vault em /seu-projeto/.cortex/ ?  Y
+? Inicializar vault em /seu-projeto/cortex/ ?  Y
 
   Detectado no ambiente: Claude Code
 
@@ -59,10 +59,10 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
   ◉ Principios SOLID
 
   ✓ Cortex adicionado ao CLAUDE.md existente
-  ✓ Vault criado em ./.cortex/
-  ✓ Adicionou .cortex/ ao .gitignore
+  ✓ Vault criado em ./cortex/
+  ✓ Adicionou cortex/ ao .gitignore
 
-  Abra ./.cortex/ no Obsidian como vault
+  Abra ./cortex/ no Obsidian como vault
   Diga "cortex start" para comecar
 ```
 
@@ -81,7 +81,7 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./.cortex/`.
 Para devs no dia a dia. Zero configuracao. Vault minimo que cresce organicamente com o uso.
 
 ```
-.cortex/
+cortex/
 ├── Projeto.md          ← sobre o projeto + boas praticas escolhidas
 └── Sessoes/
     ├── timeline/       ← uma nota por dia de trabalho
@@ -101,7 +101,7 @@ Contextos surgem com o uso — a IA sugere no final de cada sessao.
 Para projetos com estrutura definida, time, spec/PRD, ou que adotam DDD. Vault completo com DDD + SOLID ativos.
 
 ```
-.cortex/
+cortex/
 ├── Memoria Projeto.md
 ├── Dominio/
 │   ├── Entidades.md            ← Entity / Value Object / Aggregate
@@ -143,7 +143,7 @@ DDD e SOLID sao parte do protocolo ativo — antes de criar qualquer classe, a I
 Comecou no modo Freestyled e o projeto cresceu? Rode `npx @fullchico/cortex-ai` novamente:
 
 ```
-  Vault Freestyled detectado em .cortex/
+  Vault Freestyled detectado em cortex/
 
 ? Migrar para modo Projeto?  Y
 
@@ -151,7 +151,7 @@ Comecou no modo Freestyled e o projeto cresceu? Rode `npx @fullchico/cortex-ai` 
 ? Descricao:            (Sistema de tarefas)
 ? Stack:                (React + Node.js)
 
-  ✓ Vault migrado para modo Projeto em .cortex/
+  ✓ Vault migrado para modo Projeto em cortex/
 
   Sessoes e contextos existentes preservados.
   Memoria Projeto.md referencia o [[Projeto]] original.
@@ -166,24 +166,24 @@ Sessoes, timeline e contextos existentes sao preservados. O `Projeto.md` origina
 Quer comecar do zero sem perder o historico? Rode `npx @fullchico/cortex-ai` em um vault existente:
 
 ```
-  Vault Projeto detectado em .cortex/
+  Vault Projeto detectado em cortex/
 
 ? O que deseja fazer?
   ❯ Iniciar novo projeto  —  arquiva vault atual e comeca do zero
     Configurar AI tools  —  adicionar ou atualizar CLAUDE.md, cursor rules, copilot
     Sair
 
-  ✓ Vault anterior arquivado em .cortex/Anterior/2026-03-31/
+  ✓ Vault anterior arquivado em cortex/Anterior/2026-03-31/
 
   [fluxo normal de inicializacao...]
 
   ✦ Tudo pronto!
 
-  Vault criado em  →  ./.cortex/
-  Anterior em      →  ./.cortex/Anterior/2026-03-31/
+  Vault criado em  →  ./cortex/
+  Anterior em      →  ./cortex/Anterior/2026-03-31/
 ```
 
-O vault anterior e movido para `.cortex/Anterior/YYYY-MM-DD/` — disponivel no Obsidian como referencia historica. Funciona tanto para vaults Freestyled quanto Projeto.
+O vault anterior e movido para `cortex/Anterior/YYYY-MM-DD/` — disponivel no Obsidian como referencia historica. Funciona tanto para vaults Freestyled quanto Projeto.
 
 ---
 
@@ -267,15 +267,15 @@ my-project/
 │   └── cortex-end.mdc
 ├── .github/
 │   └── copilot-instructions.md     ← Copilot (commitado)
-├── .cortex/                        ← vault (gitignored)
+├── cortex/                        ← vault (gitignored)
 │   ├── .spec.md                    ← blueprint customizavel
 │   └── ...
-└── .gitignore                      ← .cortex/ ignorado
+└── .gitignore                      ← cortex/ ignorado
 ```
 
 **Commitado:** `CLAUDE.md`, `.cursor/rules/`, `.github/` — todo dev do time tem o mesmo comportamento de IA.
 
-**Gitignored:** `./.cortex/` — memoria pessoal, contexto sensivel.
+**Gitignored:** `./cortex/` — memoria pessoal, contexto sensivel.
 
 ---
 

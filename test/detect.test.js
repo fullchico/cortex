@@ -27,12 +27,12 @@ describe('detect (cwd/homedir injetáveis)', () => {
     rmSync(homedir, { recursive: true, force: true })
   })
 
-  it('vaultExists false sem .cortex', () => {
+  it('vaultExists false sem cortex', () => {
     assert.equal(vaultExists({ cwd: root }), false)
   })
 
-  it('vaultExists true com .cortex', () => {
-    mkdirSync(join(root, '.cortex'))
+  it('vaultExists true com cortex', () => {
+    mkdirSync(join(root, 'cortex'))
     assert.equal(vaultExists({ cwd: root }), true)
   })
 
@@ -41,34 +41,34 @@ describe('detect (cwd/homedir injetáveis)', () => {
   })
 
   it('detectVaultMode Freestyled sem Decisoes', () => {
-    mkdirSync(join(root, '.cortex'))
+    mkdirSync(join(root, 'cortex'))
     assert.equal(detectVaultMode({ cwd: root }), 'Freestyled')
   })
 
   it('detectVaultMode Projeto com Decisoes', () => {
-    mkdirSync(join(root, '.cortex', 'Decisoes'), { recursive: true })
+    mkdirSync(join(root, 'cortex', 'Decisoes'), { recursive: true })
     assert.equal(detectVaultMode({ cwd: root }), 'Projeto')
   })
 
   it('detectVaultMode Projeto com Decisions (EN)', () => {
-    mkdirSync(join(root, '.cortex', 'Decisions'), { recursive: true })
+    mkdirSync(join(root, 'cortex', 'Decisions'), { recursive: true })
     assert.equal(detectVaultMode({ cwd: root }), 'Projeto')
   })
 
   it('detectVaultLang pt por omissão', () => {
-    mkdirSync(join(root, '.cortex'))
+    mkdirSync(join(root, 'cortex'))
     assert.equal(detectVaultLang({ cwd: root }), 'pt')
   })
 
   it('detectVaultLang en com Project.md', () => {
-    mkdirSync(join(root, '.cortex'))
-    writeFileSync(join(root, '.cortex', 'Project.md'), '# X')
+    mkdirSync(join(root, 'cortex'))
+    writeFileSync(join(root, 'cortex', 'Project.md'), '# X')
     assert.equal(detectVaultLang({ cwd: root }), 'en')
   })
 
   it('detectVaultLang en com Project Memory.md', () => {
-    mkdirSync(join(root, '.cortex'))
-    writeFileSync(join(root, '.cortex', 'Project Memory.md'), '# X')
+    mkdirSync(join(root, 'cortex'))
+    writeFileSync(join(root, 'cortex', 'Project Memory.md'), '# X')
     assert.equal(detectVaultLang({ cwd: root }), 'en')
   })
 

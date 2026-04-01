@@ -1,5 +1,5 @@
 ---
-description: Cortex protocol — always consult the vault before writing code, making decisions, or integrating systems. Apply when working on any project that has a ./.cortex/ vault.
+description: Cortex protocol — always consult the vault before writing code, making decisions, or integrating systems. Apply when working on any project that has a ./cortex/ vault.
 globs:
 alwaysApply: true
 ---
@@ -8,27 +8,27 @@ alwaysApply: true
 
 ## Vault path
 
-The vault is at `./.cortex/` at the project root (created by `npx cortex-ai`).
+The vault is at `./cortex/` at the project root (created by `npx cortex-ai`).
 
 Detect language:
-- `./.cortex/Memoria Projeto.md` exists → PT
-- `./.cortex/Project Memory.md` exists → EN
+- `./cortex/Memoria Projeto.md` exists → PT
+- `./cortex/Project Memory.md` exists → EN
 
 If there is no vault: suggest `npx cortex-ai`.
 
 ## Before coding (MANDATORY)
 
-1. Read `./.cortex/Domain/Entities.md` — real fields. Do NOT invent.
-2. Read `./.cortex/Architecture/Code Patterns.md` — copy patterns. Do NOT improvise.
-3. Read `./.cortex/Decisions/Anti-patterns.md` — what to NEVER do.
-4. Read `./.cortex/Architecture/Module Map.md` — does it already exist? Do NOT duplicate.
-5. Read `./.cortex/Architecture/Test Strategy.md` — tests are mandatory.
+1. Read `./cortex/Domain/Entities.md` — real fields. Do NOT invent.
+2. Read `./cortex/Architecture/Code Patterns.md` — copy patterns. Do NOT improvise.
+3. Read `./cortex/Decisions/Anti-patterns.md` — what to NEVER do.
+4. Read `./cortex/Architecture/Module Map.md` — does it already exist? Do NOT duplicate.
+5. Read `./cortex/Architecture/Test Strategy.md` — tests are mandatory.
 
 ## DDD — when creating any class, type, or component
 
 1. Identify type: Entity (has ID) / Value Object (immutable) / Aggregate (consistency root) / Domain Service (stateless logic)
-2. Check bounded context in `./.cortex/Architecture/Bounded Contexts.md` — do not cross boundaries
-3. Check `./.cortex/Domain/Entities.md` — does it already exist? Do not duplicate.
+2. Check bounded context in `./cortex/Architecture/Bounded Contexts.md` — do not cross boundaries
+3. Check `./cortex/Domain/Entities.md` — does it already exist? Do not duplicate.
 4. Frontend: each feature module = bounded context. Types should mirror backend domain.
 
 ## SOLID — when writing code
@@ -41,14 +41,14 @@ If there is no vault: suggest `npx cortex-ai`.
 
 ## Before deciding
 
-6. Read `./.cortex/Decisions/Locked Definitions.md` — do NOT re-open.
-7. Read `./.cortex/Decisions/Open Questions.md` — not decided? ASK.
-8. Read `./.cortex/Business Rules/General Rules.md` — real formulas. Do NOT guess.
+6. Read `./cortex/Decisions/Locked Definitions.md` — do NOT re-open.
+7. Read `./cortex/Decisions/Open Questions.md` — not decided? ASK.
+8. Read `./cortex/Business Rules/General Rules.md` — real formulas. Do NOT guess.
 
 ## Before integrating
 
-9. Read `./.cortex/Architecture/API Contracts.md` — real shape.
-10. Read `./.cortex/Domain/Domain Glossary.md` — correct terms.
+9. Read `./cortex/Architecture/API Contracts.md` — real shape.
+10. Read `./cortex/Domain/Domain Glossary.md` — correct terms.
 
 ## Rules
 
@@ -60,9 +60,9 @@ If there is no vault: suggest `npx cortex-ai`.
 ## After a task
 
 Suggest recording in the vault:
-- New term → `./.cortex/Domain/Domain Glossary.md`
-- Field/entity → `./.cortex/Domain/Entities.md`
-- Pattern → `./.cortex/Architecture/Code Patterns.md`
-- Anti-pattern → `./.cortex/Decisions/Anti-patterns.md`
-- Decision → `./.cortex/Decisions/Locked Definitions.md`
-- Open question → `./.cortex/Decisions/Open Questions.md`
+- New term → `./cortex/Domain/Domain Glossary.md`
+- Field/entity → `./cortex/Domain/Entities.md`
+- Pattern → `./cortex/Architecture/Code Patterns.md`
+- Anti-pattern → `./cortex/Decisions/Anti-patterns.md`
+- Decision → `./cortex/Decisions/Locked Definitions.md`
+- Open question → `./cortex/Decisions/Open Questions.md`

@@ -8,18 +8,18 @@ alwaysApply: false
 
 ## Fluxo
 
-1. Detectar vault em `./.cortex/`
+1. Detectar vault em `./cortex/`
 2. Detectar idioma:
-   - `./.cortex/Memoria Projeto.md` → PT
-   - `./.cortex/Project Memory.md` → EN
+   - `./cortex/Memoria Projeto.md` → PT
+   - `./cortex/Project Memory.md` → EN
 
 3. Ler contexto:
-   - `./.cortex/Memoria Projeto.md` (ou `Project Memory.md`) — visao geral
-   - Listar `./.cortex/Sessoes/timeline/` e ler os 3 arquivos mais recentes
-   - `./.cortex/Decisoes/Definicoes Travadas.md` — regras imutaveis
+   - `./cortex/Memoria Projeto.md` (ou `Project Memory.md`) — visao geral
+   - Listar `./cortex/Sessoes/timeline/` e ler os 3 arquivos mais recentes
+   - `./cortex/Decisoes/Definicoes Travadas.md` — regras imutaveis
 
 4. Se contexto declarado (ex: "cortex start auth"):
-   - Ler `./.cortex/Sessoes/contextos/auth.md`
+   - Ler `./cortex/Sessoes/contextos/auth.md`
    - Ler header `depends:` e carregar cada contexto listado
    - Ler ultimas 3 entradas da timeline
 

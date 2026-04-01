@@ -74,7 +74,7 @@ export function installCopilot(lang = 'pt') {
 
 export function updateGitignore(lang = 'pt') {
   const gitignorePath = join(process.cwd(), '.gitignore')
-  const entry = '.cortex/'
+  const entry = 'cortex/'
 
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, 'utf8')

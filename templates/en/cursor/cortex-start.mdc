@@ -8,18 +8,18 @@ alwaysApply: false
 
 ## Flow
 
-1. Detect vault at `./.cortex/`
+1. Detect vault at `./cortex/`
 2. Detect language:
-   - `./.cortex/Memoria Projeto.md` → PT
-   - `./.cortex/Project Memory.md` → EN
+   - `./cortex/Memoria Projeto.md` → PT
+   - `./cortex/Project Memory.md` → EN
 
 3. Read context:
-   - `./.cortex/Project Memory.md` (or `Memoria Projeto.md`) — overview
-   - List `./.cortex/Sessions/timeline/` and read the 3 most recent files
-   - `./.cortex/Decisions/Locked Definitions.md` — immutable rules
+   - `./cortex/Project Memory.md` (or `Memoria Projeto.md`) — overview
+   - List `./cortex/Sessions/timeline/` and read the 3 most recent files
+   - `./cortex/Decisions/Locked Definitions.md` — immutable rules
 
 4. If a context is declared (e.g. "cortex start auth"):
-   - Read `./.cortex/Sessions/contexts/auth.md`
+   - Read `./cortex/Sessions/contexts/auth.md`
    - Read header `depends:` and load each listed context
    - Read the last 3 timeline entries
 

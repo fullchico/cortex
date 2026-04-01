@@ -25,7 +25,7 @@ describe('createVault (smoke)', () => {
         MODE: 'Freestyled',
         LANG: 'pt',
       })
-      const livre = join(dir, '.cortex', 'Projeto.md')
+      const livre = join(dir, 'cortex', 'Projeto.md')
       assert.ok(existsSync(livre))
       assert.match(readFileSync(livre, 'utf8'), /Smoke/)
     } finally {
@@ -44,8 +44,8 @@ describe('createVault (smoke)', () => {
         MODE: 'Projeto',
         LANG: 'en',
       })
-      assert.ok(existsSync(join(dir, '.cortex', 'Project Memory.md')))
-      assert.ok(existsSync(join(dir, '.cortex', 'Domain', 'Entities.md')))
+      assert.ok(existsSync(join(dir, 'cortex', 'Project Memory.md')))
+      assert.ok(existsSync(join(dir, 'cortex', 'Domain', 'Entities.md')))
     } finally {
       process.chdir(prev)
       rmSync(dir, { recursive: true, force: true })

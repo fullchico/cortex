@@ -13,4 +13,4 @@ node_modules/
 test/tmp-*/
 
 # Cortex vault
-.cortex/
+cortex/

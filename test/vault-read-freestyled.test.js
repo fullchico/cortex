@@ -10,7 +10,7 @@ describe('readFreestyledRoot', () => {
 
   beforeEach(() => {
     root = mkdtempSync(join(tmpdir(), 'cortex-vault-'))
-    mkdirSync(join(root, '.cortex'), { recursive: true })
+    mkdirSync(join(root, 'cortex'), { recursive: true })
   })
 
   afterEach(() => {
@@ -30,7 +30,7 @@ Uma descricao util.
 
 | **Stack** | Node.js |
 `
-    writeFileSync(join(root, '.cortex', 'Projeto.md'), md)
+    writeFileSync(join(root, 'cortex', 'Projeto.md'), md)
     const r = readFreestyledRoot('pt', { cwd: root })
     assert.equal(r.name, 'Meu App')
     assert.equal(r.description, 'Uma descricao util.')
@@ -39,7 +39,7 @@ Uma descricao util.
 
   it('usa Project.md quando lang en', () => {
     writeFileSync(
-      join(root, '.cortex', 'Project.md'),
+      join(root, 'cortex', 'Project.md'),
       `# App EN
 
 ## About
