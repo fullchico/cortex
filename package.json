@@ -29,8 +29,8 @@
   ],
   "scripts": {
     "start": "node bin/cortex.js",
-    "test": "node --test \"test/**/*.test.js\"",
-    "test:watch": "node --test --watch \"test/**/*.test.js\"",
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js",
     "prepare": "husky"
   },
   "dependencies": {
