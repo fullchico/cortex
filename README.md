@@ -4,9 +4,9 @@
 [![license](https://img.shields.io/npm/l/@fullchico/cortex-ai)](LICENSE)
 [![node](https://img.shields.io/node/v/@fullchico/cortex-ai)](package.json)
 
-**AI alucina porque nao tem contexto.** Inventa campos, ignora regras, duplica logica.
+Cortex e uma skill que voce adota para trabalhar melhor com AI. Como TDD ou code review — nao e um plugin que resolve tudo sozinho, e uma pratica que muda a qualidade do que voce produz.
 
-Cortex estrutura o contexto do seu projeto em um vault Obsidian. A IA consulta antes de codar — e produz codigo preciso.
+Voce estrutura o contexto do seu projeto uma vez. A partir dai, a IA consulta antes de codar — e para de inventar campos, ignorar regras e duplicar logica.
 
 ## Instalacao
 
@@ -71,6 +71,16 @@ O CLI detecta seu AI tool, configura tudo e cria o vault em `./cortex/`.
 - Node.js 18+
 - Obsidian
 - Um de: Claude Code, Cursor ou Copilot
+
+---
+
+## Fluxo diario
+
+```
+cortex start auth     → IA carrega contexto auth + depends + timeline recente
+  trabalhar...        → IA consulta vault antes de codar
+cortex end            → salva decisoes, atualiza contexto, sugere melhorias
+```
 
 ---
 
@@ -203,16 +213,6 @@ Nao usar var. Sempre TypeScript.
 ```
 
 Na proxima vez que rodar, detecta o bloco e pula sem modificar.
-
----
-
-## Fluxo diario
-
-```
-cortex start auth     → IA carrega contexto auth + depends + timeline recente
-  trabalhar...        → IA consulta vault antes de codar
-cortex end            → salva decisoes, atualiza contexto, sugere melhorias
-```
 
 ---
 
