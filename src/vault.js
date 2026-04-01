@@ -6,6 +6,17 @@ import { t } from './cli/i18n.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATES = join(__dirname, '..', 'templates')
 
+// --- Helpers públicos ---
+
+export function slugifyVaultName(name) {
+  return name
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'cortex'
+}
+
 // --- Estruturas de diretórios ---
 
 const DIRS = {

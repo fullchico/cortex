@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtempSync, rmSync, existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
-import { createVault } from '../src/vault.js'
+import { createVault, slugifyVaultName } from '../src/vault.js'
 
 const baseVars = {
   NAME: 'Smoke',
@@ -50,5 +50,35 @@ describe('createVault (smoke)', () => {
       process.chdir(prev)
       rmSync(dir, { recursive: true, force: true })
     }
+  })
+})
+
+describe('slugifyVaultName', () => {
+  it('lowercase', () => {
+    assert.equal(slugifyVaultName('Banana'), 'banana')
+  })
+
+  it('espacos viram hifen', () => {
+    assert.equal(slugifyVaultName('My App'), 'my-app')
+  })
+
+  it('underscores viram hifen', () => {
+    assert.equal(slugifyVaultName('my_project'), 'my-project')
+  })
+
+  it('caracteres especiais removidos', () => {
+    assert.equal(slugifyVaultName('My App!'), 'my-app')
+  })
+
+  it('hifens duplos colapsados', () => {
+    assert.equal(slugifyVaultName('My  App'), 'my-app')
+  })
+
+  it('nome vazio retorna cortex', () => {
+    assert.equal(slugifyVaultName(''), 'cortex')
+  })
+
+  it('cortex preservado', () => {
+    assert.equal(slugifyVaultName('cortex'), 'cortex')
   })
 })
