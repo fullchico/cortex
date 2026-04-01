@@ -1,5 +1,5 @@
 {
-  "name": "cortex-ai",
+  "name": "@fullchico/cortex-ai",
   "version": "1.0.0",
   "description": "AI memory framework for vibecoding — persistent context via Obsidian vault",
   "keywords": [
@@ -18,6 +18,9 @@
     "url": "https://github.com/fullchico/cortex.git"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "cortex-ai": "./bin/cortex.js"
