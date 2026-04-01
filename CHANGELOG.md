@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/fullchico/cortex/compare/v1.2.0...v1.3.0) (2026-04-01)
+
+
+### Features
+
+* implement CLI subcommands with router, error handling, and archiveVault tests ([41695a1](https://github.com/fullchico/cortex/commit/41695a19fbb36c777c1b0d0d1bc23eba80994d2e))
+
 # [1.2.0](https://github.com/fullchico/cortex/compare/v1.1.1...v1.2.0) (2026-04-01)
 
 
