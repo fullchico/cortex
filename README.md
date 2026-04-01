@@ -291,3 +291,7 @@ my-project/
 ## Licenca
 
 MIT
+
+---
+
+[GitHub](https://github.com/fullchico/cortex) · [npm](https://www.npmjs.com/package/@fullchico/cortex-ai) · [Issues](https://github.com/fullchico/cortex/issues)
