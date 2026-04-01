@@ -1,24 +1,35 @@
 # Cortex — AI Memory Framework
 
-Este projeto usa o Cortex framework. O vault de contexto está em `./cortex/`.
+Este projeto usa o Cortex framework. O vault esta em `./<vault>/` — nome detectado via marker `.cortex`.
 
-## Protocolo obrigatório — antes de codar
+## Detectar vault (passo obrigatorio antes de tudo)
 
-Detectar idioma: se `./cortex/Memoria Projeto.md` existe → PT. Se `./cortex/Project Memory.md` existe → EN.
+Ler o arquivo `.cortex` na raiz do projeto:
+- Se existe: `vault = JSON.parse(.cortex).vault` (ex: `{"vault":"meu-app"}` → vault = `meu-app`)
+- Se nao existe: `vault = cortex` (fallback)
+- Se vault nao existe como pasta: sugerir `npx cortex-ai` para inicializar
 
-**Antes de escrever qualquer código:**
+A partir daqui, todos os caminhos usam `./<vault>/` com o valor detectado.
 
-1. Ler `./cortex/Dominio/Entidades.md` — campos reais. NAO inventar.
-2. Ler `./cortex/Arquitetura/Padroes de Codigo.md` — copiar padroes. NAO improvisar.
-3. Ler `./cortex/Decisoes/Anti-patterns.md` — o que NUNCA fazer.
-4. Ler `./cortex/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
-5. Ler `./cortex/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
+---
+
+## Protocolo obrigatorio — antes de codar
+
+Detectar idioma: se `./<vault>/Memoria Projeto.md` existe → PT. Se `./<vault>/Project Memory.md` existe → EN.
+
+**Antes de escrever qualquer codigo:**
+
+1. Ler `./<vault>/Dominio/Entidades.md` — campos reais. NAO inventar.
+2. Ler `./<vault>/Arquitetura/Padroes de Codigo.md` — copiar padroes. NAO improvisar.
+3. Ler `./<vault>/Decisoes/Anti-patterns.md` — o que NUNCA fazer.
+4. Ler `./<vault>/Arquitetura/Mapa de Modulos.md` — ja existe? NAO duplicar.
+5. Ler `./<vault>/Arquitetura/Estrategia de Testes.md` — testes obrigatorios.
 
 **DDD — antes de criar qualquer classe/tipo:**
 - Identificar: Entity (tem ID) / Value Object (imutavel, sem ID) / Aggregate (raiz de consistencia)
 - Verificar bounded context: o que estou criando pertence a qual contexto?
-- Ler `./cortex/Arquitetura/Bounded Contexts.md` — nao cruzar fronteiras
-- Ler `./cortex/Dominio/Entidades.md` — modelo existente, nao duplicar
+- Ler `./<vault>/Arquitetura/Bounded Contexts.md` — nao cruzar fronteiras
+- Ler `./<vault>/Dominio/Entidades.md` — modelo existente, nao duplicar
 
 **SOLID — ao escrever codigo:**
 - S: esta classe/componente tem uma unica razao para mudar?
@@ -27,16 +38,14 @@ Detectar idioma: se `./cortex/Memoria Projeto.md` existe → PT. Se `./cortex/Pr
 
 **Antes de decidir:**
 
-6. Ler `./cortex/Decisoes/Definicoes Travadas.md` — NAO rediscutir.
-7. Ler `./cortex/Decisoes/Questoes em Aberto.md` — nao decidido? PERGUNTAR.
-8. Ler `./cortex/Regras de Negocio/Regras Gerais.md` — formulas reais. NAO adivinhar.
+6. Ler `./<vault>/Decisoes/Definicoes Travadas.md` — NAO rediscutir.
+7. Ler `./<vault>/Decisoes/Questoes em Aberto.md` — nao decidido? PERGUNTAR.
+8. Ler `./<vault>/Regras de Negocio/Regras Gerais.md` — formulas reais. NAO adivinhar.
 
 **Antes de integrar:**
 
-9. Ler `./cortex/Arquitetura/Contratos API.md` — shape real.
-10. Ler `./cortex/Dominio/Glossario de Dominio.md` — termos corretos.
-
-Se vault nao existe: sugerir `npx cortex-ai` para inicializar.
+9. Ler `./<vault>/Arquitetura/Contratos API.md` — shape real.
+10. Ler `./<vault>/Dominio/Glossario de Dominio.md` — termos corretos.
 
 ---
 
@@ -44,13 +53,13 @@ Se vault nao existe: sugerir `npx cortex-ai` para inicializar.
 
 Quando o usuario disser "cortex start" ou "iniciar sessao":
 
-1. Detectar vault em `./cortex/`
+1. Detectar vault (ver passo acima)
 2. Detectar idioma pelo arquivo raiz
-3. Ler `./cortex/Memoria Projeto.md` (ou `Project Memory.md`)
+3. Ler `./<vault>/Memoria Projeto.md` (ou `Project Memory.md`)
 4. Se contexto declarado (ex: "cortex start auth"):
-   - Ler `./cortex/Sessoes/contextos/<contexto>.md`
+   - Ler `./<vault>/Sessoes/contextos/<contexto>.md`
    - Ler `depends:` no header e carregar cada dependencia
-   - Listar arquivos em `./cortex/Sessoes/timeline/` e ler os 3 mais recentes
+   - Listar arquivos em `./<vault>/Sessoes/timeline/` e ler os 3 mais recentes
 5. Se sem contexto: perguntar "no que vai trabalhar hoje?"
 6. Resumir:
 
@@ -80,10 +89,10 @@ Quando o usuario disser "cortex end" ou "fechar sessao":
    - Bugs encontrados
    - Proximos passos
 
-2. Criar/atualizar `./cortex/Sessoes/timeline/YYYY-MM-DD.md`
+2. Criar/atualizar `./<vault>/Sessoes/timeline/YYYY-MM-DD.md`
 
 3. Se havia contexto ativo:
-   - Ler `./cortex/Sessoes/contextos/<nome>.md`
+   - Ler `./<vault>/Sessoes/contextos/<nome>.md`
    - Atualizar com decisoes, padroes, bugs, sessao referenciada
 
 4. Se sem contexto ativo:
@@ -93,14 +102,14 @@ Quando o usuario disser "cortex end" ou "fechar sessao":
 
 | Aconteceu | Atualizar |
 |-----------|-----------|
-| Decisao confirmada | `./cortex/Decisoes/Definicoes Travadas.md` |
-| Questao resolvida | `./cortex/Decisoes/Questoes em Aberto.md` |
-| Questao nova | `./cortex/Decisoes/Questoes em Aberto.md` |
-| Anti-pattern | `./cortex/Decisoes/Anti-patterns.md` |
-| Entidade criada/alterada | `./cortex/Dominio/Entidades.md` |
-| Termo novo | `./cortex/Dominio/Glossario de Dominio.md` |
-| Modulo criado | `./cortex/Arquitetura/Mapa de Modulos.md` |
-| Endpoint criado | `./cortex/Arquitetura/Contratos API.md` |
+| Decisao confirmada | `./<vault>/Decisoes/Definicoes Travadas.md` |
+| Questao resolvida | `./<vault>/Decisoes/Questoes em Aberto.md` |
+| Questao nova | `./<vault>/Decisoes/Questoes em Aberto.md` |
+| Anti-pattern | `./<vault>/Decisoes/Anti-patterns.md` |
+| Entidade criada/alterada | `./<vault>/Dominio/Entidades.md` |
+| Termo novo | `./<vault>/Dominio/Glossario de Dominio.md` |
+| Modulo criado | `./<vault>/Arquitetura/Mapa de Modulos.md` |
+| Endpoint criado | `./<vault>/Arquitetura/Contratos API.md` |
 
 6. Sugestoes de melhoria — verificar oportunidades encontradas durante a sessao:
 
@@ -113,14 +122,14 @@ Quando o usuario disser "cortex end" ou "fechar sessao":
 
 Regra: **nao interromper o fluxo** — se encontrou oportunidade, adicionar como `- [ ]` nos Proximos Passos da timeline. Nao sugerir o que ja esta feito.
 
-Se vault tem `./cortex/Projeto.md` com secao `## Boas Praticas`: priorizar as praticas listadas.
+Se vault tem `./<vault>/Projeto.md` com secao `## Boas Praticas`: priorizar as praticas listadas.
 
-7. Atualizar indice `./cortex/Sessoes/Sessoes - Memoria Temporal.md`
+7. Atualizar indice `./<vault>/Sessoes/Sessoes - Memoria Temporal.md`
 
 8. Confirmar:
 ```
 Sessao salva:
-- Timeline: ./cortex/Sessoes/timeline/YYYY-MM-DD.md
+- Timeline: ./<vault>/Sessoes/timeline/YYYY-MM-DD.md
 - Contexto atualizado: <nome> (se aplicavel)
 - Refs atualizadas: [lista]
 - Sugestoes: [lista ou "nenhuma"]
@@ -132,7 +141,7 @@ Sessao salva:
 
 Quando o usuario disser "cortex context <nome>":
 
-1. Verificar se `./cortex/Sessoes/contextos/<nome>.md` ja existe
+1. Verificar se `./<vault>/Sessoes/contextos/<nome>.md` ja existe
 2. Se nao existe: criar com template:
 
 ```markdown

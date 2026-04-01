@@ -1,24 +1,35 @@
 # Cortex — AI Memory Framework
 
-This project uses the Cortex framework. The context vault lives at `./cortex/`.
+This project uses the Cortex framework. The vault lives at `./<vault>/` — name detected via `.cortex` marker.
+
+## Detect vault (mandatory first step)
+
+Read the `.cortex` file at the project root:
+- If it exists: `vault = JSON.parse(.cortex).vault` (e.g. `{"vault":"my-app"}` → vault = `my-app`)
+- If it does not exist: `vault = cortex` (fallback)
+- If the vault folder does not exist: suggest `npx cortex-ai` to initialize
+
+All paths below use `./<vault>/` with the detected value.
+
+---
 
 ## Mandatory protocol — before coding
 
-Detect language: if `./cortex/Project Memory.md` exists → EN. If `./cortex/Memoria Projeto.md` exists → PT.
+Detect language: if `./<vault>/Project Memory.md` exists → EN. If `./<vault>/Memoria Projeto.md` exists → PT.
 
 **Before writing any code:**
 
-1. Read `./cortex/Domain/Entities.md` — real fields. Do NOT invent.
-2. Read `./cortex/Architecture/Code Patterns.md` — copy patterns. Do NOT improvise.
-3. Read `./cortex/Decisions/Anti-patterns.md` — what to NEVER do.
-4. Read `./cortex/Architecture/Module Map.md` — does it already exist? Do NOT duplicate.
-5. Read `./cortex/Architecture/Test Strategy.md` — tests are mandatory.
+1. Read `./<vault>/Domain/Entities.md` — real fields. Do NOT invent.
+2. Read `./<vault>/Architecture/Code Patterns.md` — copy patterns. Do NOT improvise.
+3. Read `./<vault>/Decisions/Anti-patterns.md` — what to NEVER do.
+4. Read `./<vault>/Architecture/Module Map.md` — does it already exist? Do NOT duplicate.
+5. Read `./<vault>/Architecture/Test Strategy.md` — tests are mandatory.
 
 **DDD — before creating any class/type:**
 - Identify: Entity (has ID) / Value Object (immutable, no ID) / Aggregate (consistency root)
 - Bounded context: what am I creating and which context does it belong to?
-- Read `./cortex/Architecture/Bounded Contexts.md` — do not cross boundaries
-- Read `./cortex/Domain/Entities.md` — existing model, do not duplicate
+- Read `./<vault>/Architecture/Bounded Contexts.md` — do not cross boundaries
+- Read `./<vault>/Domain/Entities.md` — existing model, do not duplicate
 
 **SOLID — when writing code:**
 - S: does this class/component have a single reason to change?
@@ -27,16 +38,14 @@ Detect language: if `./cortex/Project Memory.md` exists → EN. If `./cortex/Mem
 
 **Before deciding:**
 
-6. Read `./cortex/Decisions/Locked Definitions.md` — do NOT re-open.
-7. Read `./cortex/Decisions/Open Questions.md` — not decided? ASK.
-8. Read `./cortex/Business Rules/General Rules.md` — real formulas. Do NOT guess.
+6. Read `./<vault>/Decisions/Locked Definitions.md` — do NOT re-open.
+7. Read `./<vault>/Decisions/Open Questions.md` — not decided? ASK.
+8. Read `./<vault>/Business Rules/General Rules.md` — real formulas. Do NOT guess.
 
 **Before integrating:**
 
-9. Read `./cortex/Architecture/API Contracts.md` — real shape.
-10. Read `./cortex/Domain/Domain Glossary.md` — correct terms.
-
-If there is no vault: suggest `npx cortex-ai` to initialize.
+9. Read `./<vault>/Architecture/API Contracts.md` — real shape.
+10. Read `./<vault>/Domain/Domain Glossary.md` — correct terms.
 
 ---
 
@@ -44,13 +53,13 @@ If there is no vault: suggest `npx cortex-ai` to initialize.
 
 When the user says "cortex start" or "start session":
 
-1. Detect vault at `./cortex/`
+1. Detect vault (see step above)
 2. Detect language from the root note
-3. Read `./cortex/Project Memory.md` (or `Memoria Projeto.md`)
+3. Read `./<vault>/Project Memory.md` (or `Memoria Projeto.md`)
 4. If a context is given (e.g. "cortex start auth"):
-   - Read `./cortex/Sessions/contexts/<context>.md`
+   - Read `./<vault>/Sessions/contexts/<context>.md`
    - Read `depends:` in the header and load each dependency
-   - List files in `./cortex/Sessions/timeline/` and read the 3 most recent
+   - List files in `./<vault>/Sessions/timeline/` and read the 3 most recent
 5. If no context: ask "what are you working on today?"
 6. Summarize:
 
@@ -80,10 +89,10 @@ When the user says "cortex end" or "end session":
    - Bugs found
    - Next steps
 
-2. Create/update `./cortex/Sessions/timeline/YYYY-MM-DD.md`
+2. Create/update `./<vault>/Sessions/timeline/YYYY-MM-DD.md`
 
 3. If there was an active context:
-   - Read `./cortex/Sessions/contexts/<name>.md`
+   - Read `./<vault>/Sessions/contexts/<name>.md`
    - Update with decisions, patterns, bugs, session reference
 
 4. If there was no active context:
@@ -93,14 +102,14 @@ When the user says "cortex end" or "end session":
 
 | What happened | Update |
 |-----------|-----------|
-| Decision confirmed | `./cortex/Decisions/Locked Definitions.md` |
-| Question resolved | `./cortex/Decisions/Open Questions.md` |
-| New question | `./cortex/Decisions/Open Questions.md` |
-| Anti-pattern | `./cortex/Decisions/Anti-patterns.md` |
-| Entity created/changed | `./cortex/Domain/Entities.md` |
-| New term | `./cortex/Domain/Domain Glossary.md` |
-| New module | `./cortex/Architecture/Module Map.md` |
-| New endpoint | `./cortex/Architecture/API Contracts.md` |
+| Decision confirmed | `./<vault>/Decisions/Locked Definitions.md` |
+| Question resolved | `./<vault>/Decisions/Open Questions.md` |
+| New question | `./<vault>/Decisions/Open Questions.md` |
+| Anti-pattern | `./<vault>/Decisions/Anti-patterns.md` |
+| Entity created/changed | `./<vault>/Domain/Entities.md` |
+| New term | `./<vault>/Domain/Domain Glossary.md` |
+| New module | `./<vault>/Architecture/Module Map.md` |
+| New endpoint | `./<vault>/Architecture/API Contracts.md` |
 
 6. Improvement suggestions — check opportunities from the session:
 
@@ -113,14 +122,14 @@ When the user says "cortex end" or "end session":
 
 Rule: **do not interrupt flow** — if you spot an opportunity, add it as `- [ ]` under Next steps in the timeline. Do not suggest what is already done.
 
-If the vault has `./cortex/Project.md` with a `## Best practices` section: prioritize those practices.
+If the vault has `./<vault>/Project.md` with a `## Best practices` section: prioritize those practices.
 
-7. Update index `./cortex/Sessions/Sessions - Temporal Memory.md`
+7. Update index `./<vault>/Sessions/Sessions - Temporal Memory.md`
 
 8. Confirm:
 ```
 Session saved:
-- Timeline: ./cortex/Sessions/timeline/YYYY-MM-DD.md
+- Timeline: ./<vault>/Sessions/timeline/YYYY-MM-DD.md
 - Context updated: <name> (if applicable)
 - Refs updated: [list]
 - Suggestions: [list or "none"]
@@ -132,7 +141,7 @@ Session saved:
 
 When the user says "cortex context <name>":
 
-1. Check if `./cortex/Sessions/contexts/<name>.md` already exists
+1. Check if `./<vault>/Sessions/contexts/<name>.md` already exists
 2. If not, create from template:
 
 ```markdown

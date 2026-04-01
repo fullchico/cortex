@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## Flow
 
-1. Detect vault at `./cortex/`
+1. Detect vault: read `.cortex` at project root → `vault = JSON.parse(.cortex).vault`. If not found: `vault = cortex`.
 2. Analyze the ENTIRE conversation and extract:
 
 | Field | What to capture |
@@ -19,12 +19,12 @@ alwaysApply: false
 | Next steps | Pending items for the next session |
 
 3. Create/update timeline note:
-   - Check if `./cortex/Sessions/timeline/YYYY-MM-DD.md` exists
+   - Check if `./<vault>/Sessions/timeline/YYYY-MM-DD.md` exists
    - Same day → APPEND `## Continuation — [Topic]`
    - Does not exist → create from template
 
 4. If there was an active context:
-   - Read `./cortex/Sessions/contexts/<name>.md`
+   - Read `./<vault>/Sessions/contexts/<name>.md`
    - Update with decisions, patterns, bugs, reference to today's session
 
 5. If there was no active context:
@@ -34,14 +34,14 @@ alwaysApply: false
 
 | What happened | File |
 |-----------|---------|
-| Decision confirmed | `./cortex/Decisions/Locked Definitions.md` |
-| Question resolved | `./cortex/Decisions/Open Questions.md` (mark [x]) |
-| New question | `./cortex/Decisions/Open Questions.md` (add) |
-| Anti-pattern | `./cortex/Decisions/Anti-patterns.md` |
-| Entity created/changed | `./cortex/Domain/Entities.md` |
-| New term | `./cortex/Domain/Domain Glossary.md` |
-| New module | `./cortex/Architecture/Module Map.md` |
-| New endpoint | `./cortex/Architecture/API Contracts.md` |
+| Decision confirmed | `./<vault>/Decisions/Locked Definitions.md` |
+| Question resolved | `./<vault>/Decisions/Open Questions.md` (mark [x]) |
+| New question | `./<vault>/Decisions/Open Questions.md` (add) |
+| Anti-pattern | `./<vault>/Decisions/Anti-patterns.md` |
+| Entity created/changed | `./<vault>/Domain/Entities.md` |
+| New term | `./<vault>/Domain/Domain Glossary.md` |
+| New module | `./<vault>/Architecture/Module Map.md` |
+| New endpoint | `./<vault>/Architecture/API Contracts.md` |
 
 7. Improvement suggestions (check opportunities from the session):
 
@@ -54,14 +54,14 @@ alwaysApply: false
 
 Rule: **do not interrupt flow** — if you find one, add it as `- [ ]` under Next steps in the timeline note. Do not suggest what is already done.
 
-If the vault has `./cortex/Project.md` with a `## Best practices` section: prioritize those practices.
+If the vault has `./<vault>/Project.md` with a `## Best practices` section: prioritize those practices.
 
-8. Update index `./cortex/Sessions/Sessions - Temporal Memory.md` if new note
+8. Update index `./<vault>/Sessions/Sessions - Temporal Memory.md` if new note
 
 9. Confirm:
 ```
 Session saved:
-- Timeline: ./cortex/Sessions/timeline/YYYY-MM-DD.md
+- Timeline: ./<vault>/Sessions/timeline/YYYY-MM-DD.md
 - Context: <name> (if applicable)
 - Refs updated: [list]
 ```
